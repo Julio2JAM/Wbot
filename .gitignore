@@ -1,0 +1,19 @@
+# Ignora la carpeta node_modules
+node_modules/
+
+# Ignora sesiones
+.wwebjs_auth
+.wwebjs_cache
+sessions
+
+# Ignora construccion del proyecto
+build
+
+#Ignorar logs
+log
+
+#Textos
+media
+
+#Variables de entorno
+.env
