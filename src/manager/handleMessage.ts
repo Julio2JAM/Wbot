@@ -47,6 +47,7 @@ export async function getDataMessage(message: Message):Promise<any>{
             wpMessage: message,
         }   
     } catch (error) {
-        
+        console.error("No se pudo convertir la data.", error);
+        return null;
     }
 }
