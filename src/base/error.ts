@@ -7,11 +7,18 @@ export class NotFound extends Error {
       this.name = 'NotFound';
     }
 }
-  
+
 export class BadRequest extends Error {
     constructor(message: string) {
         super(message);
         this.name = 'BadRequest';
+    }
+}
+
+export class InternalError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'InternalError';
     }
 }
   
@@ -32,7 +39,7 @@ export function handleError(err: unknown) {
     const errorMap: { [key: string]: number } = {
         NotFound: HTTP_STATUS.NOT_FOUND,
         BadRequest: HTTP_STATUS.BAD_REQUEST,
-        Unauthorized: HTTP_STATUS.UNAUTHORIZED
+        InvalidData: HTTP_STATUS.BAD_REQUEST,
     };
 
     const status = errorMap[err.name] || HTTP_STATUS.INTERNAL_SERVER_ERROR;

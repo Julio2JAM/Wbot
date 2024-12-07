@@ -1,7 +1,7 @@
 import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from 'qrcode-terminal';
 import { getDataMessage } from "./manager/handleMessage";
-import { messagesTypesAllowed } from "./base/constants";
+import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS } from "./base/constants";
 
 const initClientWs = (): Client|null => {
     try {
@@ -70,28 +70,39 @@ const enableWS = (client:Client):boolean => {
 const processNewMessage = async (message:Message) => {
     try {
         
+        // Obtener de forma legible la informacion del mensaje de WhatsApp
         const messageData = await getDataMessage(message);
 
+        // Validar que se haya obtenido la informacion.
         if(!messageData){
             throw new Error("Ha ocurrido un error al obtener la informacion del mensaje.");
         }
 
+        // Validar que el mensaje NO sea por una actualizacion de status.
         if(messageData.message.isStatus){
             throw new Error("El mensaje no es valido.");
         }
 
+        // Validar que el mensaje este en la lista de tipos de mensajes validos.
         if(!messagesTypesAllowed.includes(messageData.message.type)){
             throw new Error("El tipo de mensaje no es valido.");
         }
 
+        // Validar que el mensaje no sea propio del Bot.
         if(messageData.message.fromMe){
             throw new Error("Mensaje del bot.");
         }
 
+        // Validar que el Bot no este en modo de desarrollo.
+        if(ONLY_DEVS && !DEV_USERS.includes(messageData.contact.id)){
+            throw new Error("Chat no valido.");
+        }
+
+        // Devolver ambas variables.
         return {message, messageData}
 
-    } catch (error) {
-        // console.error(error);
+    } catch (error:any) {
+        console.error(error.message);
         return null;
     }
 }

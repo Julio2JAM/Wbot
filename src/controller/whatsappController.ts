@@ -1,7 +1,8 @@
 import { Request } from "express";
-import { handleError } from "../base/error";
+import { BadRequest, handleError, InternalError } from "../base/error";
 import { ErrorResponse, SuccessResponse } from "../base/interfaces";
 import { HTTP_STATUS } from "../base/constants";
+import { client } from "..";
 
 export class whatsappController {
 
@@ -16,31 +17,34 @@ export class whatsappController {
 
     }
 
-    /*
-    async post(req: Request, res: Response): Promise<Response> {
+    async post(req: Request):Promise<SuccessResponse|ErrorResponse>{
 
         try {
 
             const { to, message } = req.body;
 
             if (!to || !message) {
-                throw new Errors.BadRequest("Invalid data");
+                throw new BadRequest("Datos invalidos.");
             }
 
-            const chatsData = await getDataChats();
-
-            if (!to || !message) {
-                throw new Errors.BadRequest("Invalid data");
+            if(!client){
+                throw new InternalError("El cliente de WhatsApp no esta iniciado.");
             }
 
-            await client.sendMessage(chat.contact._serialized, message);
-            return res.status(HTTP_STATUS.CREATED).json({ message: "Message sent successfully" });
+            const contact = await client.getNumberId(to);
+            
+            if(!contact){
+                throw new InternalError("El cliente de WhatsApp no esta iniciado.");
+            }
+
+            await client.sendMessage(contact._serialized, message);
+            
+            return {status: HTTP_STATUS.OK, response:{ message: "Message sent successfully" }};
 
         } catch (error) {
-            return handleError(error, res);
+            return handleError(error);
         }
 
     }
-    */
 
 }
