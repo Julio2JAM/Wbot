@@ -1,5 +1,7 @@
 import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from 'qrcode-terminal';
+import { getDataMessage } from "./manager/handleMessage";
+import { messagesTypesAllowed } from "./base/constants";
 
 const initClientWs = (): Client|null => {
     try {
@@ -37,13 +39,18 @@ const initClientWs = (): Client|null => {
     }
 }
 
-// Función para habilitar las funciones del cliente.
-function enableWS(client:Client):boolean{
+const enableWS = (client:Client):boolean => {
     try {
 
         // Activar escucha de mensajes del cliente de WS.
         client.on('message_create', async (message:Message) => {
-            console.log(message);
+            const newMessage = await processNewMessage(message);
+
+            if(!newMessage){
+                return;
+            }
+
+            console.log(newMessage);
         });
 
         //! Importante: 
@@ -60,6 +67,34 @@ function enableWS(client:Client):boolean{
     }
 }
 
+const processNewMessage = async (message:Message) => {
+    try {
+        
+        const messageData = await getDataMessage(message);
+
+        if(!messageData){
+            throw new Error("Ha ocurrido un error al obtener la informacion del mensaje.");
+        }
+
+        if(messageData.message.isStatus){
+            throw new Error("El mensaje no es valido.");
+        }
+
+        if(!messagesTypesAllowed.includes(messageData.message.type)){
+            throw new Error("El tipo de mensaje no es valido.");
+        }
+
+        if(messageData.message.fromMe){
+            throw new Error("Mensaje del bot.");
+        }
+
+        return {message, messageData}
+
+    } catch (error) {
+        // console.error(error);
+        return null;
+    }
+}
 
 export function initServiceWS(){
     try {

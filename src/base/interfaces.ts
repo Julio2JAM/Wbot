@@ -1,4 +1,4 @@
-import { Contact, Message, MessageMedia } from "whatsapp-web.js"
+import { Contact, MessageMedia, MessageTypes } from "whatsapp-web.js"
 
 export interface DataMessage {
     contact: {
@@ -9,19 +9,18 @@ export interface DataMessage {
         countryCode: string | null
     },
     chat: {
-        id: string,
         unreadCount: number,
         archived: boolean
     },
     message: {
         id: string,
-        type: string,
+        type: MessageTypes,
         body: string,
         fromMe: Boolean,
+        isStatus: Boolean,
         timestamp: number,
         idReplied: string | null,
-    },
-    wpMessage: Message
+    }
 }
 
 export interface MessageReply{
@@ -44,3 +43,13 @@ export interface FetchRequestData {
     body?: BodyInit; // Datos a enviar en el cuerpo de la solicitud (opcional)
     options?: RequestInit; // Opciones adicionales para fetch (opcional)
 }
+
+export interface ErrorResponse{
+    response: {message: string, status: number},
+    status: number
+}
+
+export interface SuccessResponse{ 
+    response: unknown;
+    status: number; 
+};

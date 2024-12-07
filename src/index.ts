@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+import { initServiceWS } from './bot';
 
 //Se inicializa la app con express
 const app = express();
@@ -15,3 +16,6 @@ const PORT = 3000;
 
 // Server escuchando al puerto establecido
 app.listen(PORT, () => console.log(`Escuchando el puerto ${PORT}`));
+
+// Iniciar Bot de WhatsApp
+export const client = initServiceWS();

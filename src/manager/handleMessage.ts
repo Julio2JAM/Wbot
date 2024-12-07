@@ -1,12 +1,13 @@
 import { Message } from "whatsapp-web.js";
 import { extractCountryCode } from "../utils/helper";
+import { DataMessage } from "../base/interfaces";
 
 /**
  * Esta función recibe un mensaje y devuelve un objeto DataMessage.
  * @param message El mensaje que se va a procesar.
  * @returns {DataMessage} Un objeto DataMessage con información detallada del mensaje.
  */
-export async function getDataMessage(message: Message):Promise<any>{
+export async function getDataMessage(message: Message):Promise<DataMessage|null>{
     try {
         // Obtiene el contacto del mensaje
         const contact = await message.getContact();
@@ -34,7 +35,7 @@ export async function getDataMessage(message: Message):Promise<any>{
             },
             chat: {
                 unreadCount: chat.unreadCount,
-                archived: chat.archived
+                archived: chat.archived,
             },
             message: {
                 id: message.id.id,
@@ -42,9 +43,9 @@ export async function getDataMessage(message: Message):Promise<any>{
                 body: message.body,
                 fromMe: message.fromMe,
                 timestamp: message.timestamp,
+                isStatus: message.isStatus,
                 idReplied: repliedMessage ? repliedMessage.id.id : null,
             },
-            wpMessage: message,
         }   
     } catch (error) {
         console.error("No se pudo convertir la data.", error);
