@@ -1,6 +1,14 @@
 import { config } from 'dotenv';
 import { MessageTypes } from 'whatsapp-web.js';
+import { MessageReply } from './interfaces';
+import { UNEXPECTED_ERROR } from './messages';
 config();
+
+// Mensaje en caso de error
+export const ErrorMessageReply:MessageReply = {
+    message: UNEXPECTED_ERROR,
+    media: null
+}
 
 // Numero de telefono del BOT
 export const ME = process.env.MY_NUMBER;

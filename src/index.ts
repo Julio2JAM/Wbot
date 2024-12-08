@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { initServiceWS } from './bot';
 import { ROUTERS } from './base/routers';
+import { UserHistory } from './base/interfaces';
 
 //Se inicializa la app con express
 const app = express();
@@ -21,6 +22,10 @@ for (const [key, value] of Object.entries(ROUTERS)) {
 
 // Server escuchando al puerto establecido
 app.listen(PORT, () => console.log(`Escuchando el puerto ${PORT}`));
+
+// Iniciar variable que almacenara flujo de conversacion
+// Inicialización en blanco
+export const USER_HISTORY: UserHistory = {};
 
 // Iniciar Bot de WhatsApp
 export const client = initServiceWS();

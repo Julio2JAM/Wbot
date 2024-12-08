@@ -66,7 +66,7 @@ export class Logger {
     public async message(messageData: DataMessage):Promise<void> {
 
         // Obtener data para el log
-        const user = parseInt(messageData.chat.id) ? `+${messageData.chat.id}` : messageData.chat.id;
+        const user = parseInt(messageData.contact.id) ? `+${messageData.contact.id}` : messageData.contact.id;
         const type = messageData.message.fromMe ? "OUTPUT" : "INPUT";
         const data = JSON.stringify({
             id: messageData.message.id,
@@ -82,21 +82,6 @@ export class Logger {
     }
 
     /*
-    public async info(processCommand: ProcessCommand):Promise<void> {
-        // Obtener data para el log
-        const user = `+${parseInt(processCommand.dataMessage.chat.id)}`;
-        const type = "INFO";
-        const data = JSON.stringify({
-            id: processCommand.dataMessage.message.id,
-            command: processCommand.command?.name ?? null,
-            matchKey: processCommand.matchKey ?? null,
-            params: processCommand.message,
-        });
-
-        // Crear log
-        this.log(user,type,data);
-    }
-    
     public async debugFetch(dataLog: Response | FetchRequestData, idUser:string):Promise<void> {
 
         // Obtener data para el log

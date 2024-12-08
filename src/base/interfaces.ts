@@ -20,6 +20,10 @@ export interface DataMessage {
         isStatus: Boolean,
         timestamp: number,
         idReplied: string | null,
+    },
+    functions?: {
+        react: Function
+        reply: Function
     }
 }
 
@@ -28,11 +32,25 @@ export interface MessageReply{
     media: null | MessageMedia
 }
 
+export interface CommandData{
+    subcommands:{[number:string]:string} | null
+    action:Function
+    message:string | null
+    steps: number
+}
+
+export interface Command{
+    [name: string]:CommandData
+}
+
 export interface DataUser{
-    command: string | null,
-    message: string[],
+    commandName: string,
     timestamp: number,
-    followable: boolean,
+    step: number
+}
+
+export interface UserHistory{
+    [user: string|number]:DataUser|null
 }
 
 // Interfaz que define la estructura del objeto de solicitud
