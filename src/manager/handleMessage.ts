@@ -109,7 +109,7 @@ export function getCommandName(idUser:string, messageContent:string):string {
         // Almacenar el nombre del comando del historial, en caso de que se envia una opcion invalida.
         let commandName = userHistory.commandName;
 
-        if(COMMANDS[commandName].steps > userHistory.step){
+        if(userHistory.step > COMMANDS[commandName].steps){
             throw new Error("El usuario ya paso todos los pasos del comando.");
         }
 
@@ -120,6 +120,7 @@ export function getCommandName(idUser:string, messageContent:string):string {
 
         return commandName;
     } catch (error) {
+        console.log(error);
         return "INICIO";
     }
 }

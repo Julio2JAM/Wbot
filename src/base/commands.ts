@@ -24,6 +24,6 @@ export const COMMANDS:Command = {
         },
         action:report,
         message:null,
-        steps:0
+        steps:2
     }
 }

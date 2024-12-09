@@ -3,7 +3,7 @@ import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { getUserHistory } from "./handleUser";
-import { REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
     try {
@@ -52,12 +52,22 @@ export function report(messageData:DataMessage):MessageReply{
         }
 
         // Validar que el usuario NO haya enviado la cedula (paso 1)
-        if(userHistory.step != 1){
-            return response;
+        if(userHistory.step == 0){
+            //TODO: EL PASO SE DEBE SUMAR UNA VEZ CONFIRMADO QUE SE HAYA ENVIADO UNA CEDULA VALIDA.
+            userHistory.step++;
+            
+        // Validar que el usuario haya enviado la cedula (paso 2)
+        }else if(userHistory.step == 1){
+            userHistory.step++;
+            response.message = REPORT_SECOND_STEP;
+
+        // Validar que se haya enviado el problema, para enviar el ultimo mensaje (paso 3)
+        }else{
+            userHistory.step++;
+            response.message = REPORT_FINIST;
         }
 
-        // Segundo mensaje.
-        response.message = REPORT_SECOND_STEP;
+        console.log(userHistory.step);
 
         // Respuesta.
         return response;
