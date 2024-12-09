@@ -1,7 +1,7 @@
 import { Chat, Message } from "whatsapp-web.js";
 import { extractCountryCode, sleep } from "../utils/helper";
 import { DataMessage } from "../base/interfaces";
-import { getUserHistory, saveUserHistory } from "./handleUser";
+import { getUserHistory, saveUserHistory } from "./handleTask";
 import { COMMANDS } from "../base/commands";
 import { ErrorMessageReply } from "../base/constants";
 

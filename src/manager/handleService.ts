@@ -2,7 +2,7 @@
 import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
-import { getUserHistory } from "./handleUser";
+import { getUserHistory } from "./handleTask";
 import { REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
@@ -53,8 +53,15 @@ export function report(messageData:DataMessage):MessageReply{
 
         // Validar que el usuario NO haya enviado la cedula (paso 1)
         if(userHistory.step == 0){
-            //TODO: EL PASO SE DEBE SUMAR UNA VEZ CONFIRMADO QUE SE HAYA ENVIADO UNA CEDULA VALIDA.
-            userHistory.step++;
+            
+            // Obtener todos los numeros del mensaje enviado.
+            const cedula = messageData.message.body.match(/\d+/g);
+
+            // Evaluar que se haya obtenido la cedula y que su longitud sea mayor a 5 digitos.
+            if(cedula && cedula.length > 5){
+                userHistory.step++;
+                userHistory.extraInfo = cedula;
+            }
             
         // Validar que el usuario haya enviado la cedula (paso 2)
         }else if(userHistory.step == 1){
@@ -63,11 +70,18 @@ export function report(messageData:DataMessage):MessageReply{
 
         // Validar que se haya enviado el problema, para enviar el ultimo mensaje (paso 3)
         }else{
+
+            // Datos para peticion fetch
+            /*
+            const fetchRequestData: FetchRequestData = {
+                URL: ,
+                method: "GET",
+            };
+            */
+
             userHistory.step++;
             response.message = REPORT_FINIST;
         }
-
-        console.log(userHistory.step);
 
         // Respuesta.
         return response;

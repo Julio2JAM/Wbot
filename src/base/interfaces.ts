@@ -47,6 +47,7 @@ export interface DataUser{
     commandName: string,
     timestamp: number,
     step: number
+    extraInfo?:any
 }
 
 export interface UserHistory{
