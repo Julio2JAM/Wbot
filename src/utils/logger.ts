@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import path from "path";
-import { DataMessage } from "../base/interfaces";
+import { DataMessage, FetchRequestData } from "../base/interfaces";
 
 export class Logger {
     
@@ -81,8 +81,7 @@ export class Logger {
 
     }
 
-    /*
-    public async debugFetch(dataLog: Response | FetchRequestData, idUser:string):Promise<void> {
+    public async debugFetch(dataLog: /*Response*/ any | FetchRequestData, idUser:string):Promise<void> {
 
         // Obtener data para el log
         const user = `+${parseInt(idUser)}`;
@@ -98,7 +97,6 @@ export class Logger {
         // Crear log
         this.log(user,type,data);
     }
-    */
 
     public async error(error: any, idUser:string):Promise<void> {
 
