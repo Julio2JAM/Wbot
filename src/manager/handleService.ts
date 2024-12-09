@@ -3,7 +3,7 @@ import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { getUserHistory } from "./handleUser";
-import { REPORT_FIRST_STEP } from "../base/messages";
+import { REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
     try {
@@ -45,14 +45,23 @@ export function report(messageData:DataMessage):MessageReply{
             throw new Error("Comando no encontrado.");
         }
 
-        if(userHistory.step){
-
-        }
-
-        return {
+        // Respuesta.
+        const response = {
             message: REPORT_FIRST_STEP,
             media: null
         }
+
+        // Validar que el usuario NO haya enviado la cedula (paso 1)
+        if(userHistory.step != 1){
+            return response;
+        }
+
+        // Segundo mensaje.
+        response.message = REPORT_SECOND_STEP;
+
+        // Respuesta.
+        return response;
+
     } catch (error) {
         return ErrorMessageReply;
     }

@@ -12,16 +12,21 @@ export function getUserHistory(user:string):DataUser|null{
 export function saveUserHistory(messageData:DataMessage, commandName:string){
     try {
 
-        let step = USER_HISTORY[messageData.contact.id]?.step ?? 1;
+        // Iniciarlizar variable "Step"
+        let step = 0;
+        
+        // Validar que se envie el mismo comando que el anterior.
+        if(USER_HISTORY[messageData.contact.id]?.commandName == commandName){
 
-        if(commandName == USER_HISTORY[messageData.contact.id]?.commandName){
-            step++;
+            // En caso de NO existir la propiedad "step", se le asigna 0.
+            step = USER_HISTORY[messageData.contact.id]?.step ?? 0;
         }
 
+        // Asignar los nuevos datos.
         USER_HISTORY[messageData.contact.id] = {
             commandName,
             timestamp: messageData.message.timestamp,
-            step,
+            step
         };
 
     } catch (error) {
