@@ -3,7 +3,8 @@ import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { getUserHistory } from "./handleTask";
-import { REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { client } from "..";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
     try {
@@ -53,20 +54,26 @@ export function report(messageData:DataMessage):MessageReply{
 
         // Validar que el usuario NO haya enviado la cedula (paso 1)
         if(userHistory.step == 0){
-            
-            // Obtener todos los numeros del mensaje enviado.
-            const cedula = messageData.message.body.match(/\d+/g);
 
-            // Evaluar que se haya obtenido la cedula y que su longitud sea mayor a 5 digitos.
-            if(cedula && cedula.length > 5){
-                userHistory.step++;
-                userHistory.extraInfo = cedula;
-            }
+            userHistory.step++;
             
         // Validar que el usuario haya enviado la cedula (paso 2)
         }else if(userHistory.step == 1){
-            userHistory.step++;
-            response.message = REPORT_SECOND_STEP;
+            
+            // Obtener todos los numeros del mensaje enviado.
+            let cedula: RegExpMatchArray | null | string = messageData.message.body.match(/\d+/g);
+
+            // Concatenarlos, por si fueron enviados separados por puntos.
+            cedula = cedula?.join('') ?? null;
+
+            // Evaluar que se haya obtenido la cedula y que su longitud sea mayor a 5 digitos.
+            if(cedula && cedula.length > 5){
+                response.message = REPORT_SECOND_STEP;
+                userHistory.step++;
+                userHistory.extraInfo = cedula;
+            }else{
+                response.message = CEDULE_ERROR;
+            }
 
         // Validar que se haya enviado el problema, para enviar el ultimo mensaje (paso 3)
         }else{
@@ -77,8 +84,11 @@ export function report(messageData:DataMessage):MessageReply{
                 URL: ,
                 method: "GET",
             };
+            const user = "";
             */
 
+            const message = `Nuevo reporte:\n\nNumero que reporta: ${messageData.contact.number}\n\nUsuario del inconveniente: ${userHistory.extraInfo}\n\nMensaje: ${messageData.message.body}`;
+            client?.sendMessage("120363374069939278@g.us", message);
             userHistory.step++;
             response.message = REPORT_FINIST;
         }

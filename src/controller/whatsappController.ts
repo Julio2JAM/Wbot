@@ -10,7 +10,17 @@ export class whatsappController {
 
         try {
 
-            return {status: HTTP_STATUS.OK, response:{}/*chats*/}
+            // Validar que el bot este inicializado.
+            if(!client){
+                throw new InternalError("El cliente de WhatsApp no esta iniciado.");
+            }
+
+            // Obtener chats.
+            const chats = await client.getChats();
+
+            // Retornar respuesta.
+            return {status: HTTP_STATUS.OK, response:chats};
+
         } catch (error) {
             return handleError(error);
         }
