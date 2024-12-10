@@ -11,7 +11,7 @@ export const ErrorMessageReply:MessageReply = {
 }
 
 // Numero de telefono del BOT
-export const ME = process.env.MY_NUMBER;
+export const ME = process.env.MY_NUMBER ?? "";
 
 // Flag para debbugear en procesos de desarrollo.
 export const ACTIVE_DEBUG = process.env.DEBUG;

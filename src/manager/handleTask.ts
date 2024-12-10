@@ -36,12 +36,10 @@ export async function updatePaymentReport(idPayment:number|string, idUser:string
 }
 
 
-export async function fetchRequest(fetchRequestData: FetchRequestData, user: string): Promise<Response|null> {
-    
-    const { URL, method, headers, body, options } = fetchRequestData;
-    const logger = new Logger();
-
+export async function fetchRequest(fetchRequestData: FetchRequestData, user: string): Promise<any|null> {
     try {
+        const { URL, method, headers, body, options } = fetchRequestData;
+        const logger = new Logger();
 
         await logger.debugFetch(fetchRequestData,user);
 
@@ -71,7 +69,7 @@ export async function fetchRequest(fetchRequestData: FetchRequestData, user: str
         return responseJson;
 
     } catch (error:any) {
-
+        const logger = new Logger();
         const dataLog = { 
             function: fetchRequest.name, 
             type: error.name,

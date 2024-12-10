@@ -84,6 +84,8 @@ export function report(messageData:DataMessage):MessageReply{
                 URL: ,
                 method: "GET",
             };
+            // Realizar peticion para realizar el pago.
+            const response = await fetchRequest(fetchRequestData, String(idUser));
             const user = "";
             */
 
