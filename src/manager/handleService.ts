@@ -3,7 +3,7 @@ import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { getUserHistory } from "./handleTask";
-import { CEDULE_ERROR, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
@@ -93,6 +93,51 @@ export function report(messageData:DataMessage):MessageReply{
             client?.sendMessage("120363374069939278@g.us", message);
             userHistory.step++;
             response.message = REPORT_FINIST;
+        }
+
+        // Respuesta.
+        return response;
+
+    } catch (error) {
+        return ErrorMessageReply;
+    }
+}
+
+export function info(messageData:DataMessage):MessageReply{
+    try {
+        
+        // Obtener historial del Usuario.
+        const userHistory = getUserHistory(messageData.contact.id);
+
+        // Validar que los datos se hayan registrado bien.
+        if(!userHistory){
+            throw new Error("Comando no encontrado.");
+        }
+
+        // Respuesta.
+        const response = {
+            message: INFORMATION_FIRST_STEP,
+            media: null
+        }
+
+        // Validar que el usuario NO haya la solicitud de informacion.
+        if(userHistory.step == 0){
+
+            // Avanzar al paso siguiente.
+            userHistory.step++;
+            
+        // Mensaje de espera, mientras alguien atiende la solicitud
+        }else if(userHistory.step == 1){
+            
+            // Enviar mensaje a grupo establecido.
+            const message = `Nuevo reporte:\n\nNumero que reporta: ${messageData.contact.number}\n\nUsuario del inconveniente: ${userHistory.extraInfo}\n\nMensaje: ${messageData.message.body}`;
+            client?.sendMessage("120363374069939278@g.us", message);
+            
+            // Mensaje de espera
+            response.message = INFORMATION_SECOND_STEP;
+
+            // Avanzar al paso siguiente.
+            userHistory.step++;
         }
 
         // Respuesta.
