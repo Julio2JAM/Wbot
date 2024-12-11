@@ -5,6 +5,9 @@ export const CEDULE_ERROR = "La cedula enviada no es valida, por favor, envie la
 // Mensaje principal
 export const MAIN_MESSAGE = "📡 *Inversiones Informático Express - PUERTO WIFI* 📡\n\nBienvenido a nuestro asistente virtual\n\nEscriba una de las opciones de su preferencia:\n\n▶ *1* Reportar un pago.\n\n▶ *2* Soportes.\n\n▶ *3* Promociones.\n\n▶ *4* Instalaciones de fibra y antena.\n\n▶ *5* Consultar información.";
 
+// PROMOCIONES
+export const PROMOTION = "stimado usuario: en este momento no contamos con promociones.";
+
 // SOPORTE TÉCNICO //
 export const REPORT_FIRST_STEP = "Por favor, envie la cedula de la persona afiliada al servicio.\n\n0️⃣ - Menu anterior.";
 export const REPORT_SECOND_STEP = "Por favor ingrese su nombre, numero de cédula, zona, tipo de servicio (fibra o inalámbrico) y el problema que esta presentando en un único mensaje\n\n0️⃣ - Cancelar reporte.";

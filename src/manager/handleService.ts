@@ -148,6 +148,49 @@ export function info(messageData:DataMessage):MessageReply{
     }
 }
 
+export function promotion(messageData:DataMessage):MessageReply{
+    try {
+        
+        // Obtener historial del Usuario.
+        const userHistory = getUserHistory(messageData.contact.id);
+
+        // Validar que los datos se hayan registrado bien.
+        if(!userHistory){
+            throw new Error("Comando no encontrado.");
+        }
+
+        const command = COMMANDS[userHistory.commandName];
+
+        // Aqui debe ir la validacion del mensaje del comando.
+        if(!command.message){
+            throw new Error("Ha ocurrido un error al obtener el mensaje de respuesta.");
+        }
+
+        // Datos para peticion fetch
+        /*
+        const fetchRequestData: FetchRequestData = {
+            URL: ,
+            method: "GET",
+        };
+        // Realizar peticion para realizar el pago.
+        const response = await fetchRequest(fetchRequestData, String(idUser));
+        const user = "";
+        
+        const imgPath = getPathImg();
+        const img = MessageMedia.fromFilePath(imgPath);
+        */
+
+        // Respuesta.
+        return {
+            message: command.message,
+            media: null
+        }
+
+    } catch (error) {
+        return ErrorMessageReply;
+    }
+}
+
 export function myData(messageData:DataMessage):MessageReply{
     try {
         console.log(messageData);
