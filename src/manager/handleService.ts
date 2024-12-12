@@ -103,7 +103,7 @@ export function report(messageData:DataMessage):MessageReply{
     }
 }
 
-export function info(messageData:DataMessage):MessageReply{
+export function information(messageData:DataMessage):MessageReply{
     try {
         
         // Obtener historial del Usuario.

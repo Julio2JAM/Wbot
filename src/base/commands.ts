@@ -1,7 +1,6 @@
 import { Command } from "./interfaces";
 import { MAIN_MESSAGE, PROMOTION } from "./messages";
-import { genericResponse, myData, promotion, report } from "../manager/handleService";
-import { info } from "console";
+import { genericResponse, information, myData, promotion, report } from "../manager/handleService";
 
 export const COMMANDS:Command = {
     "INICIO":{
@@ -43,8 +42,10 @@ export const COMMANDS:Command = {
         steps:0
     },
     "INFORMACION":{
-        subcommands:null,
-        action:info,
+        subcommands:{
+            0:"INICIO",
+        },
+        action:information,
         message:null,
         steps:1
     },
