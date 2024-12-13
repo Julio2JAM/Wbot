@@ -1,7 +1,7 @@
 import { FetchRequestData } from "../base/interfaces";
 import { Logger } from "../utils/logger";
-import { USER_HISTORY } from "..";
 import { DataMessage, DataUser } from "../base/interfaces";
+import { USER_HISTORY } from "../base/constants";
 
 /**
  * Funcion que actualiza el campo de la DB que indica que se le entrego una respuesta del pago.

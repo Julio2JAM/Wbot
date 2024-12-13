@@ -59,19 +59,46 @@ export class whatsappController {
     async reminder(_req: Request):Promise<SuccessResponse|ErrorResponse>{
         try {
 
+            /*
+            // Obtener fecha y dia actual.
+            const dateData = getDate();
+
+            // Validar que ya se hayan enviado los mensajes de hoy.
+            if(REMINDER_DATETIME == dateData.date){
+                throw new InternalError("Recordatorios ya enviado.");
+            }
+            
+            // Datos para peticion fetch de la programacion de los envios.
+            const fetchRequestDataDate: FetchRequestData = {
+                URL: "",
+                method: "GET",
+            };
+            
+            // Realizar peticion para realizar el pago.
+            const dateBD = await fetchRequest(fetchRequestDataDate, ME);
+
+            // Aqui debe ir la validacion de los datos obtenidos
+
+            // Despues la hora actual y despues 
+
+            // Asignar fecha actual.
+            REMINDER_DATETIME = dateData.date;
+
+            */
+
             // Validar que el cliente de WhatsApp este iniciado.
             if(!client){
                 throw new InternalError("El cliente de WhatsApp no esta iniciado.");
             }
 
             // Datos para peticion fetch
-            const fetchRequestData: FetchRequestData = {
+            const fetchRequestDataUsers: FetchRequestData = {
                 URL: "",
                 method: "GET",
             };
             
             // Realizar peticion para realizar el pago.
-            const users = await fetchRequest(fetchRequestData, ME);
+            const users = await fetchRequest(fetchRequestDataUsers, ME);
 
             // Validar que se hayan obtenidos usuarios para notificar.
             if(!users){

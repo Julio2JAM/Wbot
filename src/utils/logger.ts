@@ -20,16 +20,9 @@ export class Logger {
         // Restar 4 horas
         date.setHours(date.getHours() - 4);
 
-        // Obtener los componentes de la fecha
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Sumar 1 al mes ya que los meses van de 0 a 11
-        const day = String(date.getDate()).padStart(2, '0');
-    
-        // Formatear la fecha en el formato deseado
-        const dateFormatted = `${year}-${month}-${day}`;
-    
-        return dateFormatted;
-    
+        // Devolver fecha
+        return date.toISOString().split('T')[0];
+
     }
 
     private log(user: string, type: "INPUT" | "OUTPUT" | "INFO" | "ERROR" | "DEBUG", data: string):void {

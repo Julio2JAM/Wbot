@@ -16,7 +16,6 @@ export function extractCountryCode(phoneNumber:any) {
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-
 /**
  * Obtiene la ruta de una imagen por su nombre de archivo.
  * @param {string} fileName El nombre del archivo de la imagen.
@@ -37,4 +36,40 @@ export function getPathImg(fileName: string): string | null {
         console.log(error);
         return null;
     }
+}
+
+export function getDate() {
+
+    // Dias
+    const daysName = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+
+    // Obtener la fecha actual
+    const date = new Date();
+
+    // Numero del dia correspondiente.
+    const dayNumber = date.getDay();
+
+    // Restar 4 horas
+    date.setHours(date.getHours() - 4);
+    
+    // Formatear la hora actual 
+    const horas = date.getHours().toString().padStart(2, '0'); 
+    const minutos = date.getMinutes().toString().padStart(2, '0'); 
+    const segundos = date.getSeconds().toString().padStart(2, '0'); 
+    const horaActual = `${horas}:${minutos}:${segundos}`;
+
+    // Devolver fecha
+    return {
+        date: date.toISOString().split('T')[0],
+        day: daysName[dayNumber],
+        time: horaActual
+    };
+}
+
+// Función para convertir una cadena de hora a un objeto Date 
+export function convertirAFecha(horaStr:string) { 
+    const [horas, minutos, segundos] = horaStr.split(":").map(Number); 
+    const ahora = new Date(); 
+    ahora.setHours(horas, minutos, segundos, 0); 
+    return ahora; 
 }

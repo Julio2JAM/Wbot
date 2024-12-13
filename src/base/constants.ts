@@ -1,8 +1,15 @@
 import { config } from 'dotenv';
 import { MessageTypes } from 'whatsapp-web.js';
-import { MessageReply } from './interfaces';
+import { MessageReply, UserHistory } from './interfaces';
 import { UNEXPECTED_ERROR } from './messages';
 config();
+
+// Iniciar variable que almacenara flujo de conversacion
+// Inicialización en blanco
+export const USER_HISTORY: UserHistory = {};
+
+// Almacena las tareas cron activas
+export const REMINDER_DATETIME: null|string = null;
 
 // Mensaje en caso de error
 export const ErrorMessageReply:MessageReply = {
