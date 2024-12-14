@@ -1,5 +1,5 @@
 import { Command } from "./interfaces";
-import { MAIN_MESSAGE, PAY_MESSAGE, PROMOTION } from "./messages";
+import { INSTALL, MAIN_MESSAGE, PAY_MESSAGE, PROMOTION } from "./messages";
 import { genericResponse, information, myData, promotion, report } from "../manager/handleService";
 
 export const COMMANDS:Command = {
@@ -39,7 +39,7 @@ export const COMMANDS:Command = {
     "INSTALACIONES":{
         subcommands:null,
         action:promotion,
-        message:PROMOTION,
+        message:INSTALL,
         steps:0
     },
     "INFORMACION":{
