@@ -26,7 +26,7 @@ export const INFORMATION_SECOND_STEP = "Su solicitud se esta validando para ser 
 // RECORDATORIO //
 export const REMINDER = "Hola, [NOMBRE] 😊\n\nTe recordamos que tu estado es [ESTADO], se suspenderá tu servicio de internet por falta de pago. Para evitar la suspensión de tu plan [PLAN], por favor realiza el pago al número de cobranza o dirígete a nuestras oficinas. 💻📞\n\nInformación de pago:\nNúmero de cobranza: https://wa.me/+584244710322 💰\n\nAgradecemos tu atención y quedamos a tu disposición para cualquier consulta. ¡Gracias! 🙌✨"; 
 
-// RECORDATORIO //
+// MI INFORMACION //
 export const MY_INFORMATION = "Hola [NOMBRE] 😊,\nTe informamos sobre el estado de tu servicio:\n\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: FIBRA 40MB ⚡";
 export const DEBT_INFORMATION = "\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";
 export const END_INFORMATION = "\n\nSi tienes alguna pregunta o necesitas más información, no dudes en contactarnos. ¡Estamos aquí para ayudarte! 🙌✨ Espero que te guste.";

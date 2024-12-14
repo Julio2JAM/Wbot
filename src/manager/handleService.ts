@@ -35,7 +35,7 @@ export function genericResponse(messageData:DataMessage):MessageReply{
     }
 }
 
-export function report(messageData:DataMessage):MessageReply{
+export async function report(messageData:DataMessage):Promise<MessageReply>{
     try {
         
         // Obtener historial del Usuario.
@@ -79,15 +79,13 @@ export function report(messageData:DataMessage):MessageReply{
         }else{
 
             // Datos para peticion fetch
-            /*
             const fetchRequestData: FetchRequestData = {
-                URL: ,
+                URL: `http://localhost/control_de_pago_remake/public/api/cheems_client/0${messageData.contact.number}`,
                 method: "GET",
             };
-            // Realizar peticion para realizar el pago.
-            const response = await fetchRequest(fetchRequestData, String(idUser));
-            const user = "";
-            */
+
+            // Realizar peticion para obtener datos del usuario.
+            const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
             const message = `Nuevo reporte:\n\nNumero que reporta: ${messageData.contact.number}\n\nUsuario del inconveniente: ${userHistory.extraInfo}\n\nMensaje: ${messageData.message.body}`;
             client?.sendMessage("120363374069939278@g.us", message);
@@ -103,7 +101,7 @@ export function report(messageData:DataMessage):MessageReply{
     }
 }
 
-export function information(messageData:DataMessage):MessageReply{
+export async function information(messageData:DataMessage):Promise<MessageReply>{
     try {
         
         // Obtener historial del Usuario.
@@ -129,6 +127,15 @@ export function information(messageData:DataMessage):MessageReply{
         // Mensaje de espera, mientras alguien atiende la solicitud
         }else if(userHistory.step == 1){
             
+            // Datos para peticion fetch
+            const fetchRequestData: FetchRequestData = {
+                URL: `http://localhost/control_de_pago_remake/public/api/cheems_client/0${messageData.contact.number}`,
+                method: "GET",
+            };
+
+            // Realizar peticion para obtener datos del usuario.
+            const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
+
             // Enviar mensaje a grupo establecido.
             const message = `Nuevo reporte:\n\nNumero que reporta: ${messageData.contact.number}\n\nUsuario del inconveniente: ${userHistory.extraInfo}\n\nMensaje: ${messageData.message.body}`;
             client?.sendMessage("120363374069939278@g.us", message);
@@ -200,11 +207,12 @@ export async function myData(messageData:DataMessage):Promise<MessageReply>{
             method: "GET",
         };
 
-        // Realizar peticion para realizar el pago.
+        // Realizar peticion para obtener datos del usuario.
         const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
+        //TODO: Aqui debe ir un mensaje de que el usuario no esta en la plataforma.
         if(!response){
-            throw new Error("");
+            throw new Error("No se ha podido obtener los datos.");
         }
 
         let message = MY_INFORMATION;
