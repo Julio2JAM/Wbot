@@ -1,9 +1,9 @@
 
 import { ErrorMessageReply } from "../base/constants";
-import { DataMessage, MessageReply } from "../base/interfaces";
+import { DataMessage, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
-import { getUserHistory } from "./handleTask";
-import { CEDULE_ERROR, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { fetchRequest, getUserHistory } from "./handleTask";
+import { CEDULE_ERROR, END_INFORMATION, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
@@ -191,13 +191,35 @@ export function promotion(messageData:DataMessage):MessageReply{
     }
 }
 
-export function myData(messageData:DataMessage):MessageReply{
+export async function myData(messageData:DataMessage):Promise<MessageReply>{
     try {
-        console.log(messageData);
+        
+        // Datos para peticion fetch
+        const fetchRequestData: FetchRequestData = {
+            URL: `http://localhost/control_de_pago_remake/public/api/cheems_client/0${messageData.contact.number}`,
+            method: "GET",
+        };
+
+        // Realizar peticion para realizar el pago.
+        const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
+
+        if(!response){
+            throw new Error("");
+        }
+
+        let message = MY_INFORMATION;
+
+        message = message.replace("[NOMBRE]", response.nombre)
+        .replace("[CORTE]", response.corte)
+        .replace("[ESTADO]", response.estado);
+
+        message += END_INFORMATION;
+
         return {
-            message: REPORT_FIRST_STEP,
+            message,
             media: null
         }
+
     } catch (error) {
         return ErrorMessageReply;
     }
