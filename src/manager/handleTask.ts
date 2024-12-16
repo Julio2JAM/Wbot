@@ -114,8 +114,10 @@ export function saveUserHistory(messageData:DataMessage, commandName:string){
         const timestamp = USER_HISTORY[messageData.contact.id]?.timestamp;
         
         // Calcular diferencia en segundos entre el ultimo mensaje enviado y el actual.
-        if(timestamp && timestamp - messageData.message.timestamp > 5){
+        if(timestamp && timestamp - messageData.message.timestamp < 5){
             messagesInRange++;
+        }else{
+            messagesInRange = 0;
         }
 
         // Informacion adicional la cual puede ser utilizada por algun comando.
@@ -132,5 +134,35 @@ export function saveUserHistory(messageData:DataMessage, commandName:string){
 
     } catch (error) {
         console.log(error);
+    }
+}
+
+export function isSpam(messageData:DataMessage){
+    try {
+
+        // Obtener historial de usuario.
+        const userHistory = getUserHistory(messageData.contact.id);
+
+        // Validar que existan datos.
+        if(!userHistory){
+            throw new Error("No tiene historial.");
+        }
+
+        // Validar que hayan menos de 5 mensajes en el rango de tiempo evaluado.
+        if(userHistory.messagesInRange < 5){
+            throw new Error("No tiene mensajes.");
+        }
+
+        // Obtener diferencia en segundos.
+        const seconds = messageData.message.timestamp - userHistory.timestamp;
+
+        // Validar que 
+        if(seconds > 60){
+            throw new Error("Han pasado mas de 60 segundos desde su ultimo mensaje.");
+        }
+        
+        return true;
+    } catch (error) {
+        return false;
     }
 }
