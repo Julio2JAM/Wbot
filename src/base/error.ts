@@ -1,5 +1,6 @@
 // import { Logger } from "../utils/logger";
-import { HTTP_STATUS } from "./constants";
+import { Logger } from "../utils/logger";
+import { ErrorMessageReply, HTTP_STATUS } from "./constants";
 
 export class NotFound extends Error {
     constructor(message: string) {
@@ -44,6 +45,33 @@ export function handleError(err: unknown) {
 
     const status = errorMap[err.name] || HTTP_STATUS.INTERNAL_SERVER_ERROR;
     return { status, response:{ message: err.message, status: status }};
+
+}
+
+
+export function handleErrorMessage(e: any, called:string, idUser:string) {
+    
+    // Obtener los datos del mensaje de respuesta de error.
+    const MessageReply = {...ErrorMessageReply};
+    
+    // Validar que el error sea una exception esperada ( throw new InvalidData() ), para obtener su mensaje
+    if(e instanceof InvalidData && e?.message){
+        MessageReply.message = e.message;
+    }
+
+    // Contruccion de la data que se va a registrar.
+    const dataLog = { 
+        function: called, 
+        type: e.name,
+        message: e.message
+    };
+
+    // Registrar data en los logs
+    const log = new Logger();
+    log.error(dataLog, idUser);
+
+    // Enviar respuesta.
+    return MessageReply;
 
 }
 

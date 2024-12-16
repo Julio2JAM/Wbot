@@ -3,8 +3,10 @@ import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { fetchRequest, getUserHistory } from "./handleTask";
-import { CEDULE_ERROR, END_INFORMATION, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
+// import { handleErrorMessage } from "../base/error";
+import { getDate } from "../utils/helper";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
     try {
@@ -84,10 +86,27 @@ export async function report(messageData:DataMessage):Promise<MessageReply>{
                 method: "GET",
             };
 
+            const date = getDate();
+
             // Realizar peticion para obtener datos del usuario.
             const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
-            const message = `Nuevo reporte:\n\nNumero que reporta: ${messageData.contact.number}\n\nUsuario del inconveniente: ${userHistory.extraInfo}\n\nMensaje: ${messageData.message.body}`;
+            // Reemplaza los marcadores de posición en el mensaje
+            const placeholders:any = {
+                "[DATE]": `${date.date} ${date.time}`,
+                "[ID]": messageData.contact.id,
+                "[NOMBRE]": response.nombre || "Usuario no registrado.",
+                "[MESSAGE]": `"${messageData.message.body}"`
+            };
+
+            // Enviar mensaje a grupo establecido.
+            let message = INFORMATION_EXTRUCTURE;
+
+            // Reemplaza los placeholders en el mensaje
+            for (const [placeholder, value] of Object.entries(placeholders)) {
+                message = message.replace(placeholder, value as string);
+            }
+
             client?.sendMessage("120363374069939278@g.us", message);
             userHistory.step++;
             response.message = REPORT_FINIST;
@@ -133,11 +152,27 @@ export async function information(messageData:DataMessage):Promise<MessageReply>
                 method: "GET",
             };
 
+            const date = getDate();
+
             // Realizar peticion para obtener datos del usuario.
             const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
+            // Reemplaza los marcadores de posición en el mensaje
+            const placeholders:any = {
+                "[DATE]": `${date.date} ${date.time}`,
+                "[ID]": messageData.contact.id,
+                "[NOMBRE]": response.nombre || "Usuario no registrado.",
+                "[MESSAGE]": `"${messageData.message.body}"`
+            };
+
             // Enviar mensaje a grupo establecido.
-            const message = `Nuevo reporte:\n\nNumero que reporta: ${messageData.contact.number}\n\nUsuario del inconveniente: ${userHistory.extraInfo}\n\nMensaje: ${messageData.message.body}`;
+            let message = INFORMATION_EXTRUCTURE;
+
+            // Reemplaza los placeholders en el mensaje
+            for (const [placeholder, value] of Object.entries(placeholders)) {
+                message = message.replace(placeholder, value as string);
+            }
+
             client?.sendMessage("120363374069939278@g.us", message);
             
             // Mensaje de espera
@@ -215,13 +250,33 @@ export async function myData(messageData:DataMessage):Promise<MessageReply>{
             throw new Error("No se ha podido obtener los datos.");
         }
 
+        // Inicializa el mensaje con la información básica
         let message = MY_INFORMATION;
 
-        message = message.replace("[NOMBRE]", response.nombre)
-        .replace("[CORTE]", response.corte)
-        .replace("[ESTADO]", response.estado);
+        // Reemplaza los marcadores de posición en el mensaje
+        const placeholders:any = {
+            "[NOMBRE]": response.nombre,
+            "[CORTE]": response.corte,
+            "[ESTADO]": response.estado,
+            "[PLAN]": response.plan
+        };
 
+        // Si hay deuda, añade la información de deuda al mensaje
+        if (response.deuda && response.motivo_deuda) {
+            message += DEBT_INFORMATION;
+
+            placeholders["[DEUDA]"] = response.deuda;
+            placeholders["[MOTIVO_DEUDA]"] = response.motivo_deuda;
+        }
+
+        // Agregar la información final al mensaje
         message += END_INFORMATION;
+
+        // Reemplaza los placeholders en el mensaje
+        for (const [placeholder, value] of Object.entries(placeholders)) {
+            message = message.replace(placeholder, value as string);
+        }
+
 
         return {
             message,
@@ -229,6 +284,7 @@ export async function myData(messageData:DataMessage):Promise<MessageReply>{
         }
 
     } catch (error) {
+        // return handleErrorMessage(error, "myData", );
         return ErrorMessageReply;
     }
 }
