@@ -48,6 +48,7 @@ export interface DataUser{
     timestamp: number,
     step: number
     extraInfo?:any
+    messagesInRange?:number
 }
 
 export interface UserHistory{

@@ -107,6 +107,17 @@ export function saveUserHistory(messageData:DataMessage, commandName:string){
             step = USER_HISTORY[messageData.contact.id]?.step ?? 0;
         }
 
+        // Inicializar variable para mensajes enviados en un rango de tiempo.
+        let messagesInRange = USER_HISTORY[messageData.contact.id]?.messagesInRange ?? 0;
+
+        // Obtener la fecha del ultimo mensaje enviado.
+        const timestamp = USER_HISTORY[messageData.contact.id]?.timestamp;
+        
+        // Calcular diferencia en segundos entre el ultimo mensaje enviado y el actual.
+        if(timestamp && timestamp - messageData.message.timestamp > 5){
+            messagesInRange++;
+        }
+
         // Informacion adicional la cual puede ser utilizada por algun comando.
         const extraInfo = USER_HISTORY[messageData.contact.id]?.extraInfo ?? null;
 
@@ -115,7 +126,8 @@ export function saveUserHistory(messageData:DataMessage, commandName:string){
             commandName,
             timestamp: messageData.message.timestamp,
             step,
-            extraInfo
+            extraInfo,
+            messagesInRange
         };
 
     } catch (error) {

@@ -65,11 +65,3 @@ export function getDate() {
         time: horaActual
     };
 }
-
-// Función para convertir una cadena de hora a un objeto Date 
-export function convertirAFecha(horaStr:string) { 
-    const [horas, minutos, segundos] = horaStr.split(":").map(Number); 
-    const ahora = new Date(); 
-    ahora.setHours(horas, minutos, segundos, 0); 
-    return ahora; 
-}
