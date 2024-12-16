@@ -8,6 +8,9 @@ config();
 // Inicialización en blanco
 export const USER_HISTORY: UserHistory = {};
 
+// Variable para validar SPAM
+export const SPAM_LIST:(string | number)[] = [];
+
 // Almacena las tareas cron activas
 export const REMINDER_DATETIME: null|string = null;
 

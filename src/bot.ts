@@ -1,7 +1,7 @@
 import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from 'qrcode-terminal';
 import { getDataMessage, getReadyToResponse, getResponse } from "./manager/handleMessage";
-import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS } from "./base/constants";
+import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, SPAM_LIST } from "./base/constants";
 import { DataMessage } from "./base/interfaces";
 import { Logger } from "./utils/logger";
 
@@ -124,6 +124,11 @@ const isValidMessage = (messageData:DataMessage):Boolean => {
         // Validar que el Bot no este en modo de desarrollo.
         if(ONLY_DEVS && !DEV_USERS.includes(messageData.contact.id) && !messageData.message.fromMe){
             throw new Error("Chat no valido.");
+        }
+
+        // Validar lista de spam.
+        if(SPAM_LIST.includes(messageData.contact.id)){
+            throw new Error("El usuario esta en la lista de SPAM.");
         }
 
         // Devolver ambas variables.
