@@ -2,11 +2,12 @@
 import { ErrorMessageReply } from "../base/constants";
 import { DataMessage, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
-import { fetchRequest, getUserHistory } from "./handleTask";
+import { fetchRequest } from "./handleTask";
 import { CEDULE_ERROR, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
 import { getDate } from "../utils/helper";
+import { getUserHistory } from "./handleUser";
 
 export function genericResponse(messageData:DataMessage):MessageReply{
     try {

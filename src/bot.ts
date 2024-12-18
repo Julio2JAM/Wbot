@@ -4,6 +4,7 @@ import { getDataMessage, getReadyToResponse, getResponse } from "./manager/handl
 import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, SPAM_LIST } from "./base/constants";
 import { DataMessage } from "./base/interfaces";
 import { Logger } from "./utils/logger";
+import { isSpam } from "./manager/handleUser";
 
 const initClientWs = (): Client|null => {
     try {
@@ -59,7 +60,7 @@ const enableWS = (client:Client):boolean => {
             }
             
             // Validar Mensaje.
-            if(!isValidMessage(messageData)){
+            if(!isValidMessage(messageData) || isSpam(messageData)){
                 return;
             }
 

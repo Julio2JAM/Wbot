@@ -1,7 +1,7 @@
 import { Chat, Message } from "whatsapp-web.js";
 import { extractCountryCode, sleep } from "../utils/helper";
 import { DataMessage } from "../base/interfaces";
-import { getUserHistory, saveUserHistory } from "./handleTask";
+import { getUserHistory, saveUserHistory } from "./handleUser";
 import { COMMANDS } from "../base/commands";
 import { ErrorMessageReply } from "../base/constants";
 
@@ -71,7 +71,8 @@ export async function getResponse(messageData:DataMessage) {
         const commandName = getCommandName(messageData.contact.id, messageData.message.body);
 
         // Guardar nueva interaccion.
-        saveUserHistory(messageData, commandName);
+        const history = saveUserHistory(messageData, commandName);
+        console.log(history);
 
         // Obtener de la accion que ejecuta el comando, el mensaje para responder.
         const response = COMMANDS[commandName].action(messageData);
