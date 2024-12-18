@@ -32,3 +32,7 @@ export const REMINDER = "Hola, [NOMBRE] 😊\n\nTe recordamos que tu estado es [
 export const MY_INFORMATION = "Hola [NOMBRE] 😊,\nTe informamos sobre el estado de tu servicio:\n\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: [PLAN] ⚡";
 export const DEBT_INFORMATION = "\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";
 export const END_INFORMATION = "\n\nSi tienes alguna pregunta o necesitas más información, no dudes en contactarnos. ¡Estamos aquí para ayudarte! 🙌";
+
+// CONSULTAR // 
+export const CONSULT_FIRST_STEP = "Por favor, envie la cedula de la persona que desea consultar.\n\n0️⃣ - Menu anterior.";
+export const CONSULT_EXTRUCTURE = "\nNombre: [NOMBRE]\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: [PLAN] ⚡\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";

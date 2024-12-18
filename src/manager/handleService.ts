@@ -1,13 +1,35 @@
 
-import { ErrorMessageReply } from "../base/constants";
+import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
 import { DataMessage, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { fetchRequest } from "./handleTask";
-import { CEDULE_ERROR, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
 import { getDate } from "../utils/helper";
 import { getUserHistory } from "./handleUser";
+
+export function mainMessage(messageData:DataMessage):MessageReply{
+    try {
+
+        // Mensaje principal.
+        let message = MAIN_MESSAGE;
+
+        // Validar que el usuario tenga permisos superiores.
+        if(ADMIN_USERS.includes(messageData.contact.id)){
+            message = MAIN_MESSAGE;
+        }
+
+        // Respuesta.
+        return {
+            message,
+            media: null
+        }
+
+    } catch (error) {
+        return ErrorMessageReply;
+    }
+}
 
 export function genericResponse(messageData:DataMessage):MessageReply{
     try {
@@ -278,11 +300,74 @@ export async function myData(messageData:DataMessage):Promise<MessageReply>{
             message = message.replace(placeholder, value as string);
         }
 
-
         return {
             message,
             media: null
         }
+
+    } catch (error) {
+        // return handleErrorMessage(error, "myData", );
+        return ErrorMessageReply;
+    }
+}
+
+
+export async function consult(messageData:DataMessage):Promise<MessageReply>{
+    try {
+
+        // Obtener historial del Usuario.
+        const userHistory = getUserHistory(messageData.contact.id);
+
+        // Validar que los datos se hayan registrado bien.
+        if(!userHistory){
+            throw new Error("Comando no encontrado.");
+        }
+
+        // Respuesta.
+        const response = {
+            message: CONSULT_FIRST_STEP,
+            media: null
+        }
+
+        // Validar que el usuario NO haya enviado la cedula (paso 1)
+        if(userHistory.step == 0){
+            userHistory.step++;
+        }else{
+
+            // Datos para peticion fetch
+            const fetchRequestData: FetchRequestData = {
+                URL: `http://localhost/control_de_pago_remake/public/api/cheems_client/0${messageData.contact.number}`,
+                method: "GET",
+            };
+
+            // Realizar peticion para obtener datos del usuario.
+            const fetchResponse = await fetchRequest(fetchRequestData, String(messageData.contact.id));
+
+            //TODO: Aqui debe ir un mensaje de que el usuario no esta en la plataforma.
+            if(!fetchResponse){
+                throw new Error("No se ha podido obtener los datos.");
+            }
+
+            // Inicializa el mensaje con la información básica
+            let message = CONSULT_EXTRUCTURE;
+            
+            // Reemplaza los marcadores de posición en el mensaje
+            const placeholders:any = {
+                "[NOMBRE]": fetchResponse.nombre,
+                "[CORTE]": fetchResponse.corte,
+                "[ESTADO]": fetchResponse.estado,
+                "[PLAN]": fetchResponse.plan,
+                "[DEUDA]": fetchResponse.deuda,
+                "[MOTIVO_DEUDA]": fetchResponse.motivo_deuda
+            };
+
+            // Reemplaza los placeholders en el mensaje
+            for (const [placeholder, value] of Object.entries(placeholders)) {
+                message = message.replace(placeholder, value as string);
+            }
+        }
+
+        return response;
 
     } catch (error) {
         // return handleErrorMessage(error, "myData", );

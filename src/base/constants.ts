@@ -32,6 +32,9 @@ export const ONLY_DEVS = process.env.ONLY_DEVS ?? 0;
 // Lista de numeros de telefonos permitidos para ser respondidos en caso de activar el filtro de respuesta.
 export const DEV_USERS = process.env.DEV_USERS?.trim().split(',') ?? [];
 
+// Lista de numeros de telefonos con permisos superiores.
+export const ADMIN_USERS = process.env.DEV_USERS?.trim().split(',') ?? [];
+
 // Entornos
 export const ENVIROMENT: any = {
     DEV : process.env.DEV,

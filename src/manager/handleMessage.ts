@@ -2,8 +2,8 @@ import { Chat, Message } from "whatsapp-web.js";
 import { extractCountryCode, sleep } from "../utils/helper";
 import { DataMessage } from "../base/interfaces";
 import { getUserHistory, saveUserHistory } from "./handleUser";
-import { COMMANDS } from "../base/commands";
-import { ErrorMessageReply } from "../base/constants";
+import { ADMIN_COMMANDS, COMMANDS } from "../base/commands";
+import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
 
 /**
  * Esta función recibe un mensaje y devuelve un objeto DataMessage.
@@ -117,6 +117,11 @@ export function getCommandName(idUser:string, messageContent:string):string {
         // En caso de que la opcion sea valida, se remplaza el comando de respuesta.
         if(findedCommand.subcommands[messageContent]){
             commandName = findedCommand.subcommands[messageContent];
+        }
+
+        // Validar comando consultado.
+        if(ADMIN_COMMANDS.includes(commandName) && ADMIN_USERS.includes(idUser)){
+            throw new Error("El usuario no tiene acceso a este comando.");
         }
 
         return commandName;
