@@ -1,15 +1,14 @@
 
 import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
-import { DataMessage, FetchRequestData, MessageReply } from "../base/interfaces";
+import { DataToResponse, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { fetchRequest } from "./handleTask";
 import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
 import { getDate } from "../utils/helper";
-import { getUserHistory } from "./handleUser";
 
-export function mainMessage(messageData:DataMessage):MessageReply{
+export function mainMessage(messageData:DataToResponse):MessageReply{
     try {
 
         // Mensaje principal.
@@ -31,18 +30,11 @@ export function mainMessage(messageData:DataMessage):MessageReply{
     }
 }
 
-export function genericResponse(messageData:DataMessage):MessageReply{
+export function genericResponse(messageData:DataToResponse):MessageReply{
     try {
 
         // Obtener historial del Usuario.
-        const userHistory = getUserHistory(messageData.contact.id);
-
-        // Validar que los datos se hayan registrado bien.
-        if(!userHistory){
-            throw new Error("Comando no encontrado.");
-        }
-
-        const command = COMMANDS[userHistory.commandName];
+        const command = COMMANDS[messageData.history.commandName];
 
         // Aqui debe ir la validacion del mensaje del comando.
         if(!command.message){
@@ -60,16 +52,11 @@ export function genericResponse(messageData:DataMessage):MessageReply{
     }
 }
 
-export async function report(messageData:DataMessage):Promise<MessageReply>{
+export async function report(messageData:DataToResponse):Promise<MessageReply>{
     try {
         
         // Obtener historial del Usuario.
-        const userHistory = getUserHistory(messageData.contact.id);
-
-        // Validar que los datos se hayan registrado bien.
-        if(!userHistory){
-            throw new Error("Comando no encontrado.");
-        }
+        const userHistory = messageData.history;
 
         // Respuesta.
         const response = {
@@ -143,16 +130,11 @@ export async function report(messageData:DataMessage):Promise<MessageReply>{
     }
 }
 
-export async function information(messageData:DataMessage):Promise<MessageReply>{
+export async function information(messageData:DataToResponse):Promise<MessageReply>{
     try {
         
         // Obtener historial del Usuario.
-        const userHistory = getUserHistory(messageData.contact.id);
-
-        // Validar que los datos se hayan registrado bien.
-        if(!userHistory){
-            throw new Error("Comando no encontrado.");
-        }
+        const userHistory = messageData.history;
 
         // Respuesta.
         const response = {
@@ -213,18 +195,10 @@ export async function information(messageData:DataMessage):Promise<MessageReply>
     }
 }
 
-export function promotion(messageData:DataMessage):MessageReply{
+export function promotion(messageData:DataToResponse):MessageReply{
     try {
         
-        // Obtener historial del Usuario.
-        const userHistory = getUserHistory(messageData.contact.id);
-
-        // Validar que los datos se hayan registrado bien.
-        if(!userHistory){
-            throw new Error("Comando no encontrado.");
-        }
-
-        const command = COMMANDS[userHistory.commandName];
+        const command = COMMANDS[messageData.history.commandName];
 
         // Aqui debe ir la validacion del mensaje del comando.
         if(!command.message){
@@ -256,7 +230,7 @@ export function promotion(messageData:DataMessage):MessageReply{
     }
 }
 
-export async function myData(messageData:DataMessage):Promise<MessageReply>{
+export async function myData(messageData:DataToResponse):Promise<MessageReply>{
     try {
         
         // Datos para peticion fetch
@@ -297,7 +271,7 @@ export async function myData(messageData:DataMessage):Promise<MessageReply>{
 
         // Reemplaza los placeholders en el mensaje
         for (const [placeholder, value] of Object.entries(placeholders)) {
-            message = message.replace(placeholder, value as string);
+            message = message.replace(placeholder, `${value}`);
         }
 
         return {
@@ -312,16 +286,8 @@ export async function myData(messageData:DataMessage):Promise<MessageReply>{
 }
 
 
-export async function consult(messageData:DataMessage):Promise<MessageReply>{
+export async function consult(messageData:DataToResponse):Promise<MessageReply>{
     try {
-
-        // Obtener historial del Usuario.
-        const userHistory = getUserHistory(messageData.contact.id);
-
-        // Validar que los datos se hayan registrado bien.
-        if(!userHistory){
-            throw new Error("Comando no encontrado.");
-        }
 
         // Respuesta.
         const response = {
@@ -330,8 +296,8 @@ export async function consult(messageData:DataMessage):Promise<MessageReply>{
         }
 
         // Validar que el usuario NO haya enviado la cedula (paso 1)
-        if(userHistory.step == 0){
-            userHistory.step++;
+        if(messageData.history.step == 0){
+            messageData.history.step++;
         }else{
 
             // Datos para peticion fetch

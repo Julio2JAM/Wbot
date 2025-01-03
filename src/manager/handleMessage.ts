@@ -1,6 +1,6 @@
 import { Chat, Message } from "whatsapp-web.js";
 import { extractCountryCode, sleep } from "../utils/helper";
-import { DataMessage } from "../base/interfaces";
+import { DataMessage, DataToResponse } from "../base/interfaces";
 import { getUserHistory, saveUserHistory } from "./handleUser";
 import { ADMIN_COMMANDS, COMMANDS } from "../base/commands";
 import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
@@ -72,10 +72,15 @@ export async function getResponse(messageData:DataMessage) {
 
         // Guardar nueva interaccion.
         const history = saveUserHistory(messageData, commandName);
-        console.log(history);
+
+        // Se valida que la interaccion del usuario se haya guardado exitosamente.
+        if(!history){throw new Error("Error al guardar la informacion del usuario.");}
+
+        // Almacenar historial del usuario en la variable {}
+        const dataToResponse = { ...messageData, history } as DataToResponse;
 
         // Obtener de la accion que ejecuta el comando, el mensaje para responder.
-        const response = COMMANDS[commandName].action(messageData);
+        const response = COMMANDS[commandName].action(dataToResponse);
 
         return response;
     } catch (error) {
@@ -83,6 +88,12 @@ export async function getResponse(messageData:DataMessage) {
     }
 }
 
+/**
+ * Funcion para validar y obtener el comando con el que puede interacturar un usuario segun su mensaje enviado.
+ * @param {string} idUser Usuario que escribe al bot, se utiliza para manejar informacion relacionada a los permisos
+ * @param {string} messageContent Contenido del mensaje que envia el usuario
+ * @returns {string} Comando para interaccion del usuario.
+ */
 export function getCommandName(idUser:string, messageContent:string):string {
     try {
 

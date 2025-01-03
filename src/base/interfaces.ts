@@ -27,6 +27,10 @@ export interface DataMessage {
     }
 }
 
+export interface DataToResponse extends DataMessage{
+    history: DataUser
+}
+
 export interface MessageReply{
     message: string | Contact
     media: null | MessageMedia

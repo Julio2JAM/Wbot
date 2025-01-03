@@ -29,7 +29,7 @@ export function saveUserHistory(messageData:DataMessage, commandName:string): Da
         const timestamp = USER_HISTORY[messageData.contact.id]?.timestamp;
         
         // Calcular diferencia en segundos entre el ultimo mensaje enviado y el actual.
-        if(timestamp && timestamp - messageData.message.timestamp < 5){
+        if(timestamp && (timestamp - messageData.message.timestamp < 5)){
             messagesInRange++;
         }else{
             messagesInRange = 0;
