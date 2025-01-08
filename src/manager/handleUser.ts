@@ -72,7 +72,7 @@ export function isSpam(messageData:DataMessage){
         // Obtener diferencia en segundos.
         const seconds = messageData.message.timestamp - userHistory.timestamp;
 
-        // Validar que 
+        // Validar que hayan pasado mas de 60s desde el ultimo mensaje evaluado como spam.
         if(seconds > 60){
             throw new Error("Han pasado mas de 60 segundos desde su ultimo mensaje.");
         }

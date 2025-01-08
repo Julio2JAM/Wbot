@@ -1,7 +1,7 @@
 import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from 'qrcode-terminal';
 import { getDataMessage, getReadyToResponse, getResponse } from "./manager/handleMessage";
-import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, SPAM_LIST } from "./base/constants";
+import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, PUPPETEER_ARGS_FLAGS, SPAM_LIST } from "./base/constants";
 import { DataMessage } from "./base/interfaces";
 import { Logger } from "./utils/logger";
 import { isSpam } from "./manager/handleUser";
@@ -17,7 +17,7 @@ const initClientWs = (): Client|null => {
             authStrategy: new LocalAuth(),
             puppeteer: {
                 headless: true,
-                // args: [...PUPPETEER_ARGS_FLAGS]
+                args: [...PUPPETEER_ARGS_FLAGS]
             },
         });
 
@@ -60,7 +60,7 @@ const enableWS = (client:Client):boolean => {
             }
             
             // Validar Mensaje.
-            if(!isValidMessage(messageData) || isSpam(messageData)){
+            if(!isValidMessage(messageData)){
                 return;
             }
 
@@ -127,8 +127,8 @@ const isValidMessage = (messageData:DataMessage):Boolean => {
             throw new Error("Chat no valido.");
         }
 
-        // Validar lista de spam.
-        if(SPAM_LIST.includes(messageData.contact.id)){
+        // Validar que el mensaje sea SPAM.
+        if(isSpam(messageData)){
             throw new Error("El usuario esta en la lista de SPAM.");
         }
 

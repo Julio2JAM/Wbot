@@ -3,21 +3,19 @@ import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
 import { DataToResponse, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { fetchRequest } from "./handleTask";
-import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MY_INFORMATION, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MAIN_MESSAGE_ADMIN, MY_INFORMATION, NOT_FOUND_USER, NOT_REGISTER, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
 import { getDate } from "../utils/helper";
+import { handleErrorMessage, InvalidData } from "../base/error";
 
 export function mainMessage(messageData:DataToResponse):MessageReply{
     try {
 
-        // Mensaje principal.
-        let message = MAIN_MESSAGE;
-
         // Validar que el usuario tenga permisos superiores.
-        if(ADMIN_USERS.includes(messageData.contact.id)){
-            message = MAIN_MESSAGE;
-        }
+        let message = ADMIN_USERS.includes(messageData.contact.id) 
+        ? MAIN_MESSAGE_ADMIN 
+        : MAIN_MESSAGE;
 
         // Respuesta.
         return {
@@ -226,7 +224,7 @@ export function promotion(messageData:DataToResponse):MessageReply{
         }
 
     } catch (error) {
-        return ErrorMessageReply;
+        return handleErrorMessage(error, promotion.name, messageData.contact.id);
     }
 }
 
@@ -242,9 +240,9 @@ export async function myData(messageData:DataToResponse):Promise<MessageReply>{
         // Realizar peticion para obtener datos del usuario.
         const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
-        //TODO: Aqui debe ir un mensaje de que el usuario no esta en la plataforma.
+        // En caso de no obtener informacion del usuario, se envia un mensaje diferente.
         if(!response){
-            throw new Error("No se ha podido obtener los datos.");
+            throw new InvalidData(NOT_REGISTER);
         }
 
         // Inicializa el mensaje con la información básica
@@ -280,8 +278,7 @@ export async function myData(messageData:DataToResponse):Promise<MessageReply>{
         }
 
     } catch (error) {
-        // return handleErrorMessage(error, "myData", );
-        return ErrorMessageReply;
+        return handleErrorMessage(error, myData.name, messageData.contact.id);
     }
 }
 
@@ -309,9 +306,9 @@ export async function consult(messageData:DataToResponse):Promise<MessageReply>{
             // Realizar peticion para obtener datos del usuario.
             const fetchResponse = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
-            //TODO: Aqui debe ir un mensaje de que el usuario no esta en la plataforma.
+            // Validar que se haya obtenido respuesta.
             if(!fetchResponse){
-                throw new Error("No se ha podido obtener los datos.");
+                throw new InvalidData(NOT_FOUND_USER);
             }
 
             // Inicializa el mensaje con la información básica
@@ -336,7 +333,6 @@ export async function consult(messageData:DataToResponse):Promise<MessageReply>{
         return response;
 
     } catch (error) {
-        // return handleErrorMessage(error, "myData", );
-        return ErrorMessageReply;
+        return handleErrorMessage(error, consult.name, messageData.contact.id);
     }
 }

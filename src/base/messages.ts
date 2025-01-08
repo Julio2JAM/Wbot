@@ -4,6 +4,7 @@ export const CEDULE_ERROR = "La cedula enviada no es valida, por favor, envie la
 
 // PRINCIPAL //
 export const MAIN_MESSAGE = "📡 *Inversiones Informático Express - PUERTO WIFI* 📡\n\nBienvenido a nuestro asistente virtual\n\nEscriba una de las opciones de su preferencia:\n\n▶ *1* Reportar un pago.\n\n▶ *2* Soportes.\n\n▶ *3* Promociones.\n\n▶ *4* Instalaciones de fibra y antena.\n\n▶ *5* Consultar información.\n\n▶ *6* Mi informacion.";
+export const MAIN_MESSAGE_ADMIN = "📡 *Inversiones Informático Express - PUERTO WIFI* 📡\n\nBienvenido a nuestro asistente virtual\n\nEscriba una de las opciones de su preferencia:\n\n▶ *1* Reportar un pago.\n\n▶ *2* Soportes.\n\n▶ *3* Promociones.\n\n▶ *4* Instalaciones de fibra y antena.\n\n▶ *5* Consultar información.\n\n▶ *6* Mi informacion.";
 
 // PAGOS //
 export const PAY_MESSAGE = "✔Opción 1 seleccionada: REPORTAR PAGOS 💵\n\nNOTA: debe especificar su cédula de identidad y el capture del pago\n\n*Pago móvil:*\n*Teléfono:* 04127520078\n*Cédula:* 10.249.850\n*Banco:* Provincial\n\nPara reportar su pago por favor envíelo al número:\n\nhttps://wa.me/+584244710322";
@@ -33,6 +34,10 @@ export const MY_INFORMATION = "Hola [NOMBRE] 😊,\nTe informamos sobre el estad
 export const DEBT_INFORMATION = "\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";
 export const END_INFORMATION = "\n\nSi tienes alguna pregunta o necesitas más información, no dudes en contactarnos. ¡Estamos aquí para ayudarte! 🙌";
 
+export const NOT_REGISTER = "Este numero de telefono no se encuentra registrado en nuestra plataforma.";
+
 // CONSULTAR // 
 export const CONSULT_FIRST_STEP = "Por favor, envie la cedula de la persona que desea consultar.\n\n0️⃣ - Menu anterior.";
 export const CONSULT_EXTRUCTURE = "\nNombre: [NOMBRE]\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: [PLAN] ⚡\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";
+
+export const NOT_FOUND_USER = "El numero enviado no se encuentra registrado en nuestra plataforma.";

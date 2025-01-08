@@ -131,7 +131,7 @@ export function getCommandName(idUser:string, messageContent:string):string {
         }
 
         // Validar comando consultado.
-        if(ADMIN_COMMANDS.includes(commandName) && ADMIN_USERS.includes(idUser)){
+        if(ADMIN_COMMANDS.includes(commandName) && !ADMIN_USERS.includes(idUser)){
             throw new Error("El usuario no tiene acceso a este comando.");
         }
 
