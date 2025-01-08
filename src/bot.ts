@@ -1,7 +1,7 @@
 import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from 'qrcode-terminal';
 import { getDataMessage, getReadyToResponse, getResponse } from "./manager/handleMessage";
-import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, PUPPETEER_ARGS_FLAGS, SPAM_LIST } from "./base/constants";
+import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, PUPPETEER_ARGS_FLAGS } from "./base/constants";
 import { DataMessage } from "./base/interfaces";
 import { Logger } from "./utils/logger";
 import { isSpam } from "./manager/handleUser";

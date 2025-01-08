@@ -3,7 +3,7 @@ import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
 import { DataToResponse, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { fetchRequest } from "./handleTask";
-import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MAIN_MESSAGE_ADMIN, MY_INFORMATION, NOT_FOUND_USER, NOT_REGISTER, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MAIN_MESSAGE_ADMIN, MY_INFORMATION, NOT_FOUND_USER, NOT_REGISTER, REPORT_EXTRUCTURE, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
 import { getDate } from "../utils/helper";
@@ -97,24 +97,25 @@ export async function report(messageData:DataToResponse):Promise<MessageReply>{
             const date = getDate();
 
             // Realizar peticion para obtener datos del usuario.
-            const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
+            const responseApi = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
             // Reemplaza los marcadores de posición en el mensaje
             const placeholders:any = {
                 "[DATE]": `${date.date} ${date.time}`,
                 "[ID]": messageData.contact.id,
-                "[NOMBRE]": response.nombre || "Usuario no registrado.",
-                "[MESSAGE]": `"${messageData.message.body}"`
+                "[NOMBRE]": responseApi?.nombre || "Usuario no registrado.",
+                "[MESSAGE]": `${messageData.message.body}`
             };
 
             // Enviar mensaje a grupo establecido.
-            let message = INFORMATION_EXTRUCTURE;
+            let message = REPORT_EXTRUCTURE;
 
             // Reemplaza los placeholders en el mensaje
             for (const [placeholder, value] of Object.entries(placeholders)) {
                 message = message.replace(placeholder, value as string);
             }
 
+            messageData.functions?.react("✍🏼");
             client?.sendMessage("120363374069939278@g.us", message);
             userHistory.step++;
             response.message = REPORT_FINIST;
@@ -124,7 +125,7 @@ export async function report(messageData:DataToResponse):Promise<MessageReply>{
         return response;
 
     } catch (error) {
-        return ErrorMessageReply;
+        return handleErrorMessage(error, report.name, messageData.contact.id);
     }
 }
 

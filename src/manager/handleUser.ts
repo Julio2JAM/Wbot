@@ -27,9 +27,9 @@ export function saveUserHistory(messageData:DataMessage, commandName:string): Da
 
         // Obtener la fecha del ultimo mensaje enviado.
         const timestamp = USER_HISTORY[messageData.contact.id]?.timestamp;
-        
+
         // Calcular diferencia en segundos entre el ultimo mensaje enviado y el actual.
-        if(timestamp && (timestamp - messageData.message.timestamp < 5)){
+        if(timestamp && (messageData.message.timestamp - timestamp < 5)){
             messagesInRange++;
         }else{
             messagesInRange = 0;
@@ -65,7 +65,7 @@ export function isSpam(messageData:DataMessage){
         }
 
         // Validar que hayan menos de 5 mensajes en el rango de tiempo evaluado.
-        if(userHistory.messagesInRange < 5){
+        if(userHistory.messagesInRange <= 3){
             throw new Error("No tiene mensajes.");
         }
 
