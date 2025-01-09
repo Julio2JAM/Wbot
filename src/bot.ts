@@ -5,6 +5,8 @@ import { DEV_USERS, messagesTypesAllowed, ONLY_DEVS, PUPPETEER_ARGS_FLAGS } from
 import { DataMessage } from "./base/interfaces";
 import { Logger } from "./utils/logger";
 import { isSpam } from "./manager/handleUser";
+import fastq from "fastq";
+import { sleep } from "./utils/helper";
 
 const initClientWs = (): Client|null => {
     try {
@@ -45,45 +47,12 @@ const initClientWs = (): Client|null => {
 const enableWS = (client:Client):boolean => {
     try {
 
+        // Funcion de encolamiento para evitar baneos.
+        const messageQueue = fastq.promise(processMessage, 1);
+
         // Activar escucha de mensajes del cliente de WS.
-        client.on('message_create', async (message:Message) => {
-
-            // Obtiene el chat del mensaje
-            const chat = await message.getChat();
-
-            // Obtener de forma legible la informacion del mensaje de WhatsApp
-            const messageData = await getDataMessage(message, chat);
-
-            // Validar que se haya obtenido la data formateada.
-            if(!messageData){
-                return;
-            }
-            
-            // Validar Mensaje.
-            if(!isValidMessage(messageData)){
-                return;
-            }
-
-            // Registrar mensaje en un log.
-            const logger = new Logger();
-            logger.message(messageData);
-
-            // Validar que el mensaje no sea propio del Bot.
-            if(messageData.message.fromMe){
-                return;
-            }
-
-            // Prepara mensaje para respuesta.
-            await getReadyToResponse(chat);
-
-            // Obtener respuesta.
-            const response = await getResponse(messageData);
-
-            // Responder mensaje.
-            message.reply(response.message, undefined, {
-                media:response.media ?? undefined
-            });
-        });
+        // Recibe el mensaje, y lo manda a la funcion "processMessage", de forma encolada.
+        client.on('message_create', async (message:Message) => messageQueue.push(message) );
 
         //! Importante: 
         // Este evento convierte los mensajes cifrados a mensajes normales
@@ -97,6 +66,51 @@ const enableWS = (client:Client):boolean => {
         console.error('Error enabling client:', error);
         return false;
     }
+}
+
+const processMessage = async (message:Message):Promise<any> => {
+    try {
+
+        // Obtiene el chat del mensaje
+        const chat = await message.getChat();
+
+        // Obtener de forma legible la informacion del mensaje de WhatsApp
+        const messageData = await getDataMessage(message, chat);
+
+        // Validar que se haya obtenido la data formateada.
+        if(!messageData){
+            return;
+        }
+        
+        // Validar Mensaje.
+        if(!isValidMessage(messageData)){
+            return;
+        }
+
+        // Registrar mensaje en un log.
+        const logger = new Logger();
+        logger.message(messageData);
+
+        // Validar que el mensaje no sea propio del Bot.
+        if(messageData.message.fromMe){
+            return;
+        }
+
+        // Prepara mensaje para respuesta.
+        await getReadyToResponse(chat);
+
+        // Obtener respuesta.
+        const response = await getResponse(messageData);
+
+        // Responder mensaje.
+        message.reply(response.message, undefined, {
+            media:response.media ?? undefined
+        });
+
+        // Esperar 300 milisegundos para manejar el siguiente mensaje.
+        await sleep(300);
+
+    } catch (error) {}
 }
 
 const isValidMessage = (messageData:DataMessage):Boolean => {
