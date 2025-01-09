@@ -6,8 +6,9 @@ import { fetchRequest } from "./handleTask";
 import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MAIN_MESSAGE_ADMIN, MY_INFORMATION, NOT_FOUND_USER, NOT_REGISTER, REPORT_EXTRUCTURE, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
-import { getDate } from "../utils/helper";
+import { getDate, getPathImg } from "../utils/helper";
 import { handleErrorMessage, InvalidData } from "../base/error";
+import { MessageMedia } from "whatsapp-web.js";
 
 export function mainMessage(messageData:DataToResponse):MessageReply{
     try {
@@ -194,7 +195,7 @@ export async function information(messageData:DataToResponse):Promise<MessageRep
     }
 }
 
-export function promotion(messageData:DataToResponse):MessageReply{
+export async function promotion(messageData:DataToResponse):Promise<MessageReply>{
     try {
         
         const command = COMMANDS[messageData.history.commandName];
@@ -205,23 +206,30 @@ export function promotion(messageData:DataToResponse):MessageReply{
         }
 
         // Datos para peticion fetch
-        /*
         const fetchRequestData: FetchRequestData = {
-            URL: ,
+            URL: "",
             method: "GET",
         };
+
         // Realizar peticion para realizar el pago.
-        const response = await fetchRequest(fetchRequestData, String(idUser));
-        const user = "";
+        const responseApi = await fetchRequest(fetchRequestData, String(messageData.contact.id));
         
-        const imgPath = getPathImg();
+        if(!responseApi?.ruta){
+            throw new Error(command.message);
+        }
+
+        const imgPath = getPathImg(responseApi?.ruta);
+
+        if(!imgPath){
+            throw new Error("Ha ocurrido un error al obtener el mensaje de respuesta.");
+        }
+
         const img = MessageMedia.fromFilePath(imgPath);
-        */
 
         // Respuesta.
         return {
-            message: command.message,
-            media: null
+            message: "",
+            media: img
         }
 
     } catch (error) {
@@ -282,7 +290,6 @@ export async function myData(messageData:DataToResponse):Promise<MessageReply>{
         return handleErrorMessage(error, myData.name, messageData.contact.id);
     }
 }
-
 
 export async function consult(messageData:DataToResponse):Promise<MessageReply>{
     try {

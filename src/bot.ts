@@ -83,9 +83,7 @@ const processMessage = async (message:Message):Promise<any> => {
         }
         
         // Validar Mensaje.
-        if(!isValidMessage(messageData)){
-            return;
-        }
+        if(!isValidMessage(messageData)){return;}
 
         // Registrar mensaje en un log.
         const logger = new Logger();
@@ -103,7 +101,7 @@ const processMessage = async (message:Message):Promise<any> => {
         const response = await getResponse(messageData);
 
         // Responder mensaje.
-        message.reply(response.message, undefined, {
+        await message.reply(response.message, undefined, {
             media:response.media ?? undefined
         });
 
