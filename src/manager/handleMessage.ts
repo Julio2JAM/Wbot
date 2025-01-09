@@ -1,9 +1,11 @@
 import { Chat, Message } from "whatsapp-web.js";
 import { extractCountryCode, sleep } from "../utils/helper";
 import { DataMessage, DataToResponse } from "../base/interfaces";
-import { getUserHistory, saveUserHistory } from "./handleUser";
+import { getUserHistory, isSpam, saveUserHistory } from "./handleUser";
 import { ADMIN_COMMANDS, COMMANDS } from "../base/commands";
-import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
+import { ADMIN_USERS } from "../base/constants";
+import { handleErrorMessage, InvalidData } from "../base/error";
+import { SPAM_MESSAGE } from "../base/messages";
 
 /**
  * Esta función recibe un mensaje y devuelve un objeto DataMessage.
@@ -73,8 +75,11 @@ export async function getResponse(messageData:DataMessage) {
         // Guardar nueva interaccion.
         const history = saveUserHistory(messageData, commandName);
 
-        // Se valida que la interaccion del usuario se haya guardado exitosamente.
+        // Validar que la interaccion del usuario se haya guardado exitosamente.
         if(!history){throw new Error("Error al guardar la informacion del usuario.");}
+
+        // Validar que la ultima interaccion no cumpla los criterios de spam.
+        if(isSpam(messageData)){throw new InvalidData(SPAM_MESSAGE);}
 
         // Almacenar historial del usuario en la variable {}
         const dataToResponse = { ...messageData, history } as DataToResponse;
@@ -84,7 +89,7 @@ export async function getResponse(messageData:DataMessage) {
 
         return response;
     } catch (error) {
-        return ErrorMessageReply;
+        return handleErrorMessage(error, getResponse.name, messageData.contact.id);
     }
 }
 

@@ -1,4 +1,5 @@
 // Validaciones internas.
+export const SPAM_MESSAGE = "Hemos notado que algunos de tus mensajes recientes parecen spam, por lo tanto, durante 1 minuto no recibirás respuestas. Pedimos disculpas si nos hemos equivocado.";
 export const UNEXPECTED_ERROR = "Ocurrio un error inesperado, por favor, intente nuevamente.";
 export const CEDULE_ERROR = "La cedula enviada no es valida, por favor, envie la cedula de la persona afiliada al servicio.\n\n0️⃣ - Menu anterior."
 
