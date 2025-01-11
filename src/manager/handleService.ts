@@ -1,12 +1,12 @@
 
-import { ADMIN_USERS, ErrorMessageReply } from "../base/constants";
+import { ADMIN_USERS, ErrorMessageReply, MENSAJE_ESTADOS } from "../base/constants";
 import { DataToResponse, FetchRequestData, MessageReply } from "../base/interfaces";
 import { COMMANDS } from "../base/commands";
 import { fetchRequest } from "./handleTask";
-import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MAIN_MESSAGE_ADMIN, MY_INFORMATION, NOT_FOUND_USER, NOT_REGISTER, REPORT_EXTRUCTURE, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
+import { CEDULE_ERROR, CONSULT_EXTRUCTURE, CONSULT_FIRST_STEP, DEBT_INFORMATION, END_INFORMATION, INFORMATION_EXTRUCTURE, INFORMATION_FIRST_STEP, INFORMATION_SECOND_STEP, MAIN_MESSAGE, MAIN_MESSAGE_ADMIN, MY_INFORMATION, NOT_FOUND_USER, NOT_REGISTER, REMINDER, REPORT_EXTRUCTURE, REPORT_FINIST, REPORT_FIRST_STEP, REPORT_SECOND_STEP } from "../base/messages";
 import { client } from "..";
 // import { handleErrorMessage } from "../base/error";
-import { getDate, getPathImg } from "../utils/helper";
+import { getDate, getPathImg, sleep } from "../utils/helper";
 import { handleErrorMessage, InvalidData } from "../base/error";
 import { MessageMedia } from "whatsapp-web.js";
 
@@ -250,7 +250,7 @@ export async function myData(messageData:DataToResponse):Promise<MessageReply>{
         const response = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
         // En caso de no obtener informacion del usuario, se envia un mensaje diferente.
-        if(!response){
+        if(!response || response.length == 0){
             throw new InvalidData(NOT_REGISTER);
         }
 
@@ -307,7 +307,7 @@ export async function consult(messageData:DataToResponse):Promise<MessageReply>{
 
             // Datos para peticion fetch
             const fetchRequestData: FetchRequestData = {
-                URL: `http://localhost/control_de_pago_remake/public/api/cheems_client/0${messageData.contact.number}`,
+                URL: `http://localhost/control_de_pago_remake/public/api/cheems_client/0${Number(messageData.message.body)}`,
                 method: "GET",
             };
 
@@ -315,7 +315,7 @@ export async function consult(messageData:DataToResponse):Promise<MessageReply>{
             const fetchResponse = await fetchRequest(fetchRequestData, String(messageData.contact.id));
 
             // Validar que se haya obtenido respuesta.
-            if(!fetchResponse){
+            if(!fetchResponse || fetchResponse.length == 0){
                 throw new InvalidData(NOT_FOUND_USER);
             }
 
@@ -329,16 +329,102 @@ export async function consult(messageData:DataToResponse):Promise<MessageReply>{
                 "[ESTADO]": fetchResponse.estado,
                 "[PLAN]": fetchResponse.plan,
                 "[DEUDA]": fetchResponse.deuda,
-                "[MOTIVO_DEUDA]": fetchResponse.motivo_deuda
+                "[MOTIVO_DEUDA]": fetchResponse.motivo_deuda ?? "N/A"
             };
 
             // Reemplaza los placeholders en el mensaje
             for (const [placeholder, value] of Object.entries(placeholders)) {
                 message = message.replace(placeholder, value as string);
             }
+
+            response.message = message;
+            messageData.history.step++;
         }
 
         return response;
+
+    } catch (error) {
+        return handleErrorMessage(error, consult.name, messageData.contact.id);
+    }
+}
+
+export async function reminder(messageData:DataToResponse):Promise<MessageReply>{
+    try {
+
+        // Datos para peticion fetch
+        const fetchRequestDataUsers: FetchRequestData = {
+            URL: `http://localhost/control_de_pago_remake/public/api/cheems_clients`,
+            method: "GET",
+        };
+        
+        // Realizar peticion para realizar el pago.
+        const users = await fetchRequest(fetchRequestDataUsers, String(messageData.contact.id));
+
+        // Validar que se hayan obtenidos usuarios para notificar.
+        if(!users){
+            throw new Error("No se han obtenido usuarios.");
+        }
+
+        const response = {
+            success: [] as String[],
+            failed: [] as String[],
+        }
+
+        // Iterar usuarios.
+        for (const key in users) {
+
+            const value = users[key];
+
+            // De no existir la propiedad telefono, se omite el resto de la iteraccion.
+            if(!value.tlf){
+                response.failed.push(value.telefono);
+                continue;
+            }
+
+            // Obtener id en WhatsApp del numero.
+            const contact = await client?.getNumberId(`58${Number(value.tlf)}`);
+            
+            // Validar en caso que el numero no tenga WhatsApp
+            if(!contact){
+                response.failed.push(value.tlf);
+                continue;
+            }
+
+            response.success.push(value.tlf);
+
+            // Inicializa el mensaje con la información básica
+            let message = REMINDER;
+            
+            // Reemplaza los marcadores de posición en el mensaje
+            const placeholders:any = {
+                "[NOMBRE]": value.nombre,
+                "[ESTADO]": MENSAJE_ESTADOS[value.estado_id],
+                "[PLAN]": value.plan,
+            };
+
+            // Reemplaza los placeholders en el mensaje
+            for (const [placeholder, value] of Object.entries(placeholders)) {
+                message = message.replace(placeholder, value as string);
+            }
+
+            // Enviar mensaje.
+            await client?.sendMessage(contact._serialized, message);
+
+            // Esperar 5s
+            await sleep(5000);
+
+            // Cada 10 mensajes hacer una pausa mas larga
+            if(Number(key) > 0 && Number(key) % 5 == 0){
+                await sleep(180000);
+            }
+            
+        }
+
+        // Respuesta.
+        return {
+            message: "Recordatorio finalizado, mensajes enviados: "+response.success.length+", mensajes fallidos: "+(response.failed.length > 0  ? response.failed : "0"),
+            media: null
+        }
 
     } catch (error) {
         return handleErrorMessage(error, consult.name, messageData.contact.id);

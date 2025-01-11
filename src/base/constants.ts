@@ -47,6 +47,14 @@ export const SERVER = {
     PORT: process.env.PORT || 3000,
 }
 
+export const MENSAJE_ESTADOS: any = {
+    2:"quedan *5 DÍAS*",
+    3:"quedan *4 DÍAS*",
+    4:"quedan *3 DÍAS*",
+    6:"quedan *2 DÍAS*",
+    7:"queda *1 DÍA*",
+}
+
 export const HTTP_STATUS = {
     OK: 200,
     CREATED: 201,

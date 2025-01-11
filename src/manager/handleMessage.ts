@@ -142,7 +142,7 @@ export function getCommandName(idUser:string, messageContent:string):string {
 
         return commandName;
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         return "INICIO";
     }
 }

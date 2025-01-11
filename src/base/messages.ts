@@ -5,7 +5,7 @@ export const CEDULE_ERROR = "La cedula enviada no es valida, por favor, envie la
 
 // PRINCIPAL //
 export const MAIN_MESSAGE = "📡 *Inversiones Informático Express - PUERTO WIFI* 📡\n\nBienvenido a nuestro asistente virtual\n\nEscriba una de las opciones de su preferencia:\n\n▶ *1* Reportar un pago.\n\n▶ *2* Soportes.\n\n▶ *3* Promociones.\n\n▶ *4* Instalaciones de fibra y antena.\n\n▶ *5* Consultar información.\n\n▶ *6* Mi informacion.";
-export const MAIN_MESSAGE_ADMIN = "📡 *Inversiones Informático Express - PUERTO WIFI* 📡\n\nBienvenido a nuestro asistente virtual\n\nEscriba una de las opciones de su preferencia:\n\n▶ *1* Reportar un pago.\n\n▶ *2* Soportes.\n\n▶ *3* Promociones.\n\n▶ *4* Instalaciones de fibra y antena.\n\n▶ *5* Consultar información.\n\n▶ *6* Mi informacion.";
+export const MAIN_MESSAGE_ADMIN = "📡 *Inversiones Informático Express - PUERTO WIFI* 📡\n\nBienvenido a nuestro asistente virtual\n\nEscriba una de las opciones de su preferencia:\n\n▶ *1* Reportar un pago.\n\n▶ *2* Soportes.\n\n▶ *3* Promociones.\n\n▶ *4* Instalaciones de fibra y antena.\n\n▶ *5* Consultar información.\n\n▶ *6* Mi informacion.\n\n▶ *7* Instalaciones.";
 
 // PAGOS //
 export const PAY_MESSAGE = "✔Opción 1 seleccionada: REPORTAR PAGOS 💵\n\nNOTA: debe especificar su cédula de identidad y el capture del pago\n\n*Pago móvil:*\n*Teléfono:* 04127520078\n*Cédula:* 10.249.850\n*Banco:* Provincial\n\nPara reportar su pago por favor envíelo al número:\n\nhttps://wa.me/+584244710322";
@@ -28,7 +28,7 @@ export const INFORMATION_SECOND_STEP = "Su solicitud se esta validando para ser 
 export const INFORMATION_EXTRUCTURE = "Solicitud de Información - [DATE]:\n\nDetalles del Usuario:\n- Número de Teléfono: [ID]\n- Nombre: [NOMBRE]\n\nMensaje del Usuario:\n\"[MESSAGE]\"";
 
 // RECORDATORIO //
-export const REMINDER = "Hola, [NOMBRE] 😊\n\nTe recordamos que tu estado es [ESTADO], se suspenderá tu servicio de internet por falta de pago. Para evitar la suspensión de tu plan [PLAN], por favor realiza el pago al número de cobranza o dirígete a nuestras oficinas. 💻📞\n\nInformación de pago:\nNúmero de cobranza: https://wa.me/+584244710322 💰\n\nAgradecemos tu atención y quedamos a tu disposición para cualquier consulta. ¡Gracias! 🙌✨"; 
+export const REMINDER = "Estimado cliente, *[NOMBRE]* 😊\n\nLe recordamos que le [ESTADO] para realizar el pago de su servicio de internet. Para evitar la suspensión de su plan *[PLAN]* por falta de pago, por favor realice el pago al número de cobranza o dirígete a nuestras oficinas. 💻📞\n\nNúmero de cobranza: https://wa.me/+584244710322 💰\n\nAgradecemos tu atención y quedamos a tu disposición para cualquier consulta. ¡Gracias! 🙌✨"; 
 
 // MI INFORMACION //
 export const MY_INFORMATION = "Hola [NOMBRE] 😊,\nTe informamos sobre el estado de tu servicio:\n\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: [PLAN] ⚡";
@@ -39,6 +39,6 @@ export const NOT_REGISTER = "Este numero de telefono no se encuentra registrado 
 
 // CONSULTAR // 
 export const CONSULT_FIRST_STEP = "Por favor, envie la cedula de la persona que desea consultar.\n\n0️⃣ - Menu anterior.";
-export const CONSULT_EXTRUCTURE = "\nNombre: [NOMBRE]\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: [PLAN] ⚡\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";
+export const CONSULT_EXTRUCTURE = "Nombre: [NOMBRE]\nCorte: [CORTE] 📅\nEstado: [ESTADO] 🚫\nPlan: [PLAN] ⚡\nDeuda: [DEUDA] 💰\nMotivo de deuda: [MOTIVO_DEUDA] 📋";
 
 export const NOT_FOUND_USER = "El numero enviado no se encuentra registrado en nuestra plataforma.";
