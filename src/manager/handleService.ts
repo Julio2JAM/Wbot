@@ -215,7 +215,7 @@ export async function promotion(messageData:DataToResponse):Promise<MessageReply
         const responseApi = await fetchRequest(fetchRequestData, String(messageData.contact.id));
         
         if(!responseApi?.ruta){
-            throw new Error(command.message);
+            throw new InvalidData(command.message);
         }
 
         const imgPath = getPathImg(responseApi?.ruta);
