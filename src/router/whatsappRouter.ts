@@ -14,4 +14,9 @@ router.post('/', async (req:Request, res:Response) => {
     res.status(response.status).json(response.response);
 });
 
+router.post('/difusion', async (req:Request, res:Response) => {
+    const response = await controller.difusion(req);
+    res.status(response.status).json(response.response);
+});
+
 export default router;

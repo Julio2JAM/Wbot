@@ -1,9 +1,8 @@
 import { Request } from "express";
 import { BadRequest, handleError, InternalError } from "../base/error";
-import { ErrorResponse, FetchRequestData, SuccessResponse } from "../base/interfaces";
-import { HTTP_STATUS, ME } from "../base/constants";
+import { ErrorResponse, SuccessResponse } from "../base/interfaces";
+import { HTTP_STATUS } from "../base/constants";
 import { client } from "..";
-import { fetchRequest } from "../manager/handleTask";
 import { sleep } from "../utils/helper";
 
 export class whatsappController {
@@ -56,54 +55,25 @@ export class whatsappController {
         }
     }
 
-    async reminder(_req: Request):Promise<SuccessResponse|ErrorResponse>{
+    async difusion(req: Request):Promise<SuccessResponse|ErrorResponse>{
         try {
-
-            /*
-            // Obtener fecha y dia actual.
-            const dateData = getDate();
-
-            // Validar que ya se hayan enviado los mensajes de hoy.
-            if(REMINDER_DATETIME == dateData.date){
-                throw new InternalError("Recordatorios ya enviado.");
-            }
-            
-            // Datos para peticion fetch de la programacion de los envios.
-            const fetchRequestDataDate: FetchRequestData = {
-                URL: "",
-                method: "GET",
-            };
-            
-            // Realizar peticion para realizar el pago.
-            const dateBD = await fetchRequest(fetchRequestDataDate, ME);
-
-            // Aqui debe ir la validacion de los datos obtenidos
-
-            // Despues la hora actual y despues 
-
-            // Asignar fecha actual.
-            REMINDER_DATETIME = dateData.date;
-
-            */
 
             // Validar que el cliente de WhatsApp este iniciado.
             if(!client){
                 throw new InternalError("El cliente de WhatsApp no esta iniciado.");
             }
 
-            // Datos para peticion fetch
-            const fetchRequestDataUsers: FetchRequestData = {
-                URL: "",
-                method: "GET",
-            };
-            
-            // Realizar peticion para realizar el pago.
-            const users = await fetchRequest(fetchRequestDataUsers, ME);
-
             // Validar que se hayan obtenidos usuarios para notificar.
-            if(!users){
+            if(!req.body?.usuarios){
                 throw new Error("No se han obtenido usuarios.");
             }
+            
+            // Validar que se hayan obtenidos usuarios para notificar.
+            if(!req.body?.mensaje){
+                throw new Error("No se han obtenido el mensaje.");
+            }
+
+            const users = req.body.usuarios;
 
             const response = {
                 success: [] as String[],
@@ -114,36 +84,41 @@ export class whatsappController {
             for (const [key, value] of users.entries()) {
 
                 // De no existir la propiedad telefono, se omite el resto de la iteraccion.
-                if(!value.telefono){
-                    response.failed.push(value.telefono);
+                if(!value.tlf){
+                    response.failed.push(value.tlf);
                     continue;
                 }
 
                 // Obtener id en WhatsApp del numero.
-                const contact = await client.getNumberId(value.telefono);
+                const contact = await client.getNumberId(`58${Number(value.tlf)}`);
                 
                 // Validar en caso que el numero no tenga WhatsApp
                 if(!contact){
-                    response.failed.push(value.telefono);
+                    response.failed.push(value.tlf);
                     continue;
                 }
 
-                response.success.push(value.telefono);
+                response.success.push(value.tlf);
 
                 // Enviar mensaje.
-                await client.sendMessage(contact._serialized, "message");
+                await client.sendMessage(contact._serialized, req.body.mensaje);
+                
+                /*console.log({
+                    "Usuario":value.tlf,
+                    "Mensaje":req.body.mensaje
+                });*/
 
-                // Esperar 1s
-                sleep(1000);
+                // Esperar s
+                await sleep(3000);
 
                 // Cada 10 mensajes hacer una pausa mas larga
-                if(key % 10 == 0){
-                    sleep(100000);
+                if((key+1) % 20 == 0){
+                    await sleep(60000);
                 }
-                
+
             }
 
-            return {status: HTTP_STATUS.OK, response:{ message: "Message sent successfully" }};
+            return {status: HTTP_STATUS.OK, response};
 
         } catch (error) {
             return handleError(error);

@@ -166,7 +166,7 @@ export async function information(messageData:DataToResponse):Promise<MessageRep
             const placeholders:any = {
                 "[DATE]": `${date.date} ${date.time}`,
                 "[ID]": messageData.contact.id,
-                "[NOMBRE]": response.nombre || "Usuario no registrado.",
+                "[NOMBRE]": response?.nombre || "Usuario no registrado.",
                 "[MESSAGE]": `"${messageData.message.body}"`
             };
 
@@ -427,6 +427,6 @@ export async function reminder(messageData:DataToResponse):Promise<MessageReply>
         }
 
     } catch (error) {
-        return handleErrorMessage(error, consult.name, messageData.contact.id);
+        return handleErrorMessage(error, reminder.name, messageData.contact.id);
     }
 }
